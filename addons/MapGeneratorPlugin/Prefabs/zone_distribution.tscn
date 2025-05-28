@@ -1,0 +1,33 @@
+[gd_scene load_steps=2 format=3 uid="uid://drodee6urrm10"]
+
+[ext_resource type="Script" path="res://addons/MapGeneratorPlugin/ZoneDistribution.cs" id="1_n04ll"]
+
+[node name="ZoneDistribution" type="Control"]
+custom_minimum_size = Vector2(0, 512)
+layout_mode = 3
+anchor_right = 0.363
+anchor_bottom = 0.938
+offset_right = -0.175995
+offset_bottom = 0.175964
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_n04ll")
+
+[node name="VBox_UI" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 416.0
+offset_bottom = 490.0
+
+[node name="Grid" type="GridContainer" parent="VBox_UI"]
+layout_mode = 2
+columns = 11
+
+[node name="HSeparator" type="HSeparator" parent="VBox_UI"]
+layout_mode = 2
+
+[node name="HBox_Zones" type="HBoxContainer" parent="VBox_UI"]
+layout_mode = 2
+
+[node name="Btn_Save" type="Button" parent="VBox_UI"]
+layout_mode = 2
+text = "Save"

@@ -1,0 +1,22 @@
+{
+  "profiles": {
+    "TFG_Godot": {
+      "commandName": "Project",
+      "nativeDebugging": false,
+      "remoteDebugEnabled": false
+    },
+    "RUN": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files\\Godot_v4.3\\Godot_v4.3-stable_mono_win64.exe",
+      "workingDirectory": ".",
+      "nativeDebugging": true
+    },
+    "DEBUG_TOOL": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files\\Godot_v4.3\\Godot_v4.3-stable_mono_win64.exe",
+      "commandLineArgs": "-e --path \"C:\\Users\\alvar\\Documents\\TFG\\tfg_godot\"",
+      "workingDirectory": ".",
+      "nativeDebugging": true
+    }
+  }
+}

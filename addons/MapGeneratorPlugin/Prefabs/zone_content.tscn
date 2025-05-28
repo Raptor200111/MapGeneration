@@ -1,0 +1,33 @@
+[gd_scene load_steps=2 format=3 uid="uid://dhaq1vxvri7b3"]
+
+[ext_resource type="Script" path="res://addons/MapGeneratorPlugin/ZoneContent.cs" id="1_7ycfo"]
+
+[node name="ZoneContent" type="PanelContainer"]
+custom_minimum_size = Vector2(0, 35)
+anchors_preset = -1
+anchor_right = 0.197
+anchor_bottom = 0.054
+offset_right = 73.056
+offset_bottom = 0.00799942
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_7ycfo")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="ZoneNameLabel" type="Label" parent="HBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Zone Name"
+
+[node name="ColorContent" type="ColorRect" parent="HBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+
+[node name="EditButton" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "Edit"
+
+[connection signal="pressed" from="HBoxContainer/EditButton" to="." method="Edit"]
