@@ -24,12 +24,12 @@ struct Pos
 public partial class Chunk : Node3D
 {
     private Tile _tile;
-	private int[,] _zoneBlockDistribution;
-	private Block[,] _blocks;
     private Zone[] _zones;
     private float blockScale;
     private Vector2I chunkSize;
     private uint _seed;
+
+    private MultiMeshInstance3D _visual;
 
     public Chunk() 
 	{
@@ -77,43 +77,47 @@ public partial class Chunk : Node3D
 		}
 
         Transform3D[,] matrix = _tile.GetMatrix(blockScale, chunkSize, this.Position);
-		_blocks = new Block[chunkSize.Y, chunkSize.X];
         
-        PerlinNoise(chunkSize.X, chunkSize.Y, coherenceTable);
+        var zonesUsed = PerlinNoise(chunkSize.X, chunkSize.Y, coherenceTable);
 
-        Zone black = new Zone();
-        black.Initialize("black", new Color(0, 0, 0));
+        foreach (var auxZone in zonesUsed)
+        {
+            var zoneChild = new Node3D();
+            zoneChild.Name = _zones[auxZone.Key].GetZoneName();
+            AddChild(zoneChild);
+            zoneChild.Owner = Owner;
 
-        for (int j = 0; j < chunkSize.Y; j++)
-		{
-			Node3D rowChild = new Node3D();
-			rowChild.Name = "row" + j.ToString();
-			this.AddChild(rowChild);
-            rowChild.Owner = this.Owner;
-			
-            for (int i = 0; i < chunkSize.X; i++)
-			{
-				_blocks[j, i] = new Block();
-                _blocks[j, i].Name = "Block" + j.ToString() + i.ToString();
-                
-                rowChild.AddChild( _blocks[j, i]);
-                _blocks[j, i].Owner = rowChild.Owner;
-
-                if (_zoneBlockDistribution[j, i] == -1)
+            foreach (var auxResource in auxZone.Value)
+            {
+                var mm = new MultiMesh
                 {
-                    _blocks[j, i].Initialize(black, _tile, matrix[j, i], blockScale);
+                    Mesh = _tile.GetMesh(),//hay que cambiarlo
+                    TransformFormat = MultiMesh.TransformFormatEnum.Transform3D,
+                    InstanceCount = auxResource.Value.Count
+                };
+
+                int i = 0;
+                foreach (var auxPos in auxResource.Value)
+                {
+                    mm.SetInstanceTransform(i++, matrix[auxPos.X, auxPos.Y]);
                 }
-                else
-                    _blocks[j, i].Initialize(_zones[_zoneBlockDistribution[j, i]], _tile, matrix[j, i], blockScale);
+
+                var mmi = new MultiMeshInstance3D
+                {
+                    Name = "Resource_" + auxResource.Key.ToString(),
+                    Multimesh = mm
+                };
+
+                zoneChild.AddChild(mmi);
+                mmi.Owner = zoneChild.Owner;
             }
-        }
+        } 
     }
 
-
-    private void PerlinNoise(int width, int height, int[,] coherenceTable)
+    private Dictionary<int, Dictionary<int, List<Vector2I>>> PerlinNoise(int width, int height, int[,] coherenceTable)
     {
         FastNoiseLite tempNoise = new FastNoiseLite();
-        tempNoise.SetNoiseType(FastNoiseLite.NoiseTypeEnum.Perlin);
+        tempNoise.SetNoiseType(FastNoiseLite.NoiseTypeEnum.SimplexSmooth);
         tempNoise.SetSeed((int)_seed);
         tempNoise.SetFrequency(0.05f);
         tempNoise.SetFractalType(FastNoiseLite.FractalTypeEnum.None);
@@ -121,47 +125,62 @@ public partial class Chunk : Node3D
         tempNoise.Offset = new Vector3(0, 0, 0);
 
         FastNoiseLite moistNoise = new FastNoiseLite();
-        moistNoise.SetNoiseType(FastNoiseLite.NoiseTypeEnum.Perlin);
-        int reverseSeed = _seed.ToString().Reverse().Aggregate(0, (b, x) => 10 * b + x - '0');
-        moistNoise.SetSeed(reverseSeed);
+        moistNoise.SetNoiseType(FastNoiseLite.NoiseTypeEnum.SimplexSmooth);
+        //int reverseSeed = _seed.ToString().Reverse().Aggregate(0, (b, x) => 10 * b + x - '0');
+        moistNoise.SetSeed((int)_seed + 1);
         moistNoise.SetFrequency(0.05f);
         moistNoise.SetFractalType(FastNoiseLite.FractalTypeEnum.None);
         moistNoise.DomainWarpEnabled = false;
         moistNoise.Offset = new Vector3(0, 0, 0);
 
-        /*
-        fnl.SetCellularDistanceFunction(FastNoiseLite.CellularDistanceFunctionEnum.Hybrid);
-        fnl.SetCellularReturnType(FastNoiseLite.CellularReturnTypeEnum.CellValue);
-        fnl.SetCellularJitter(1f);
-        */
-
-        _zoneBlockDistribution = new int[height, width];
+        Resources[] r = GetZonesResources();
+        
+        var zonesUsed = new Dictionary<int, Dictionary<int, List<Vector2I>>>();
 
         for (int j = 0; j < height; j++)
         {
             for (int i = 0; i < width; i++)
             {
-                _zoneBlockDistribution[j, i] = -1;
-            }
-        }
-
-        for (int j = 0; j < height; j++)
-        {
-            for (int i = 0; i < width; i++)
-            {
-                int indiTempNoise = 9 - Mathf.Clamp((int)((tempNoise.GetNoise2D(j, i) + 1) * 5), 0, 9); // from 0 to 10 both inclusive
+                int indiTempNoise = 9 - Mathf.Clamp((int)((tempNoise.GetNoise2D(j, i) + 1) * 5), 0, 9); // from 0 to 9 both inclusive
                 int indiMoistNoise = Mathf.Clamp((int)((moistNoise.GetNoise2D(j, i) + 1) * 5), 0, 9);
-                
+                int resourceNoise = (indiTempNoise + indiMoistNoise) * 5;
 
                 //Debug.Print("0."+indiTempNoise.ToString() + " 0." + indiMoistNoise.ToString() + " : " + coherenceTable[indiTempNoise, indiMoistNoise].ToString());
 
-                _zoneBlockDistribution[j, i] = coherenceTable[indiTempNoise, indiMoistNoise];
+                int zoneId = coherenceTable[indiTempNoise, indiMoistNoise];
+                if (zoneId != -1)
+                {
+                    int resourceId = r[zoneId].GetResourceIndexByProbanility(resourceNoise);
+                    GD.Print("Zone: " + zoneId + " Resource: " + resourceId + " at (" + i + ", " + j + ")");
+                    GD.Print("indiTempNoise:" + indiTempNoise + " indiMoistNoise:" + indiMoistNoise + "NoiseSum: " + resourceNoise);
+
+
+                    if (!zonesUsed.ContainsKey(zoneId))
+                        zonesUsed[zoneId] = new Dictionary<int, List<Vector2I>>();
+                    if (!zonesUsed[zoneId].ContainsKey(resourceId))
+                        zonesUsed[zoneId][resourceId] = new List<Vector2I>();
+
+                    zonesUsed[zoneId][resourceId].Add(new Vector2I(i, j));
+                }
             }
         }
+
+        return zonesUsed;
     }
 
     private bool ViablePos (Pos pos)
     {
         return pos.x >= 0 && pos.y >= 0 && pos.x < chunkSize.X && pos.y < chunkSize.Y;
+    }
+
+    private Resources[] GetZonesResources()
+    {
+        Resources[] zonesWithResources = new Resources[_zones.Length];
+
+        int zondeId = 0;
+        foreach (Zone z in _zones)
+            zonesWithResources[zondeId++] = z.GetResources();
+
+        return zonesWithResources;
     }
 }

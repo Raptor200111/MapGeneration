@@ -24,16 +24,68 @@ public partial class HexTile : Tile
         return matrix;
     }
 
-    public override CsgPrimitive3D GetPoligon()
+    public override ArrayMesh GetMesh()
     {
-        var poligon = new CsgPolygon3D();
+        Vector3[] v = new Vector3[12];
+        for (int i = 0; i < 6; i++)
+        {
+            float angle = i * Mathf.Pi / 3f;
+            float x = 1 * Mathf.Cos(angle);
+            float z = 1 * Mathf.Sin(angle);
 
-        poligon.Polygon = new Vector2[4] { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0) };
-        poligon.Mode = CsgPolygon3D.ModeEnum.Spin;
-        poligon.SpinSides = 6;
-        poligon.Position = new Vector3(0, 0, 0);
-        //poligon.Basis = new Basis(new Vector3(0, 1, 0), (float)((270f / 180f) * Math.PI));
+            v[i] = new Vector3(x, 0f, z); // base
+            v[i + 6] = new Vector3(x, 1, z); // tapa
+        }
 
-        return poligon;
+        var tri = new int[60];
+        int t = 0;
+
+        //Base
+        for (int i = 1; i < 5; i++)
+        {
+            tri[t++] = i + 1;
+            tri[t++] = i;
+            tri[t++] = 0;
+        }
+
+        //Tapa
+        for (int i = 1; i < 5; i++)
+        {
+            tri[t++] = 6;
+            tri[t++] = i + 6;
+            tri[t++] = i + 1 + 6;
+        }
+
+        //Caras laterales
+        for (int i = 0; i < 6; i++)
+        {
+            int next = (i + 1) % 6;
+
+            tri[t++] = i;
+            tri[t++] = next;
+            tri[t++] = next + 6;
+
+            tri[t++] = i;
+            tri[t++] = next + 6;
+            tri[t++] = i + 6;
+        }
+
+        var st = new SurfaceTool();
+        st.Begin(Mesh.PrimitiveType.Triangles);
+
+        for (int i = 0; i < tri.Length; i += 3)
+        {
+            Vector3 a = v[tri[i]];
+            Vector3 b = v[tri[i + 1]];
+            Vector3 c = v[tri[i + 2]];
+
+            Vector3 n = (b - a).Cross(c - a).Normalized();
+
+            st.SetNormal(n); st.AddVertex(a);
+            st.SetNormal(n); st.AddVertex(b);
+            st.SetNormal(n); st.AddVertex(c);
+        }
+
+        return st.Commit();
     }
 }

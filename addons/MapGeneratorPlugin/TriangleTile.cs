@@ -30,17 +30,51 @@ public partial class TriangleTile : Tile
         return matrix;
     }
 
-    public override CsgPrimitive3D GetPoligon()
+    public override ArrayMesh GetMesh()
     {
-        var poligon = new CsgPolygon3D();
+        float r = 1f / Mathf.Sqrt(3.0f);
+        float startAngle = Mathf.Pi / 2.0f;
 
-        poligon.Polygon = new Vector2[4] { new Vector2(0, 0), new Vector2(0, 1), new Vector2(triangleHeight * 2 / 3f, 1), new Vector2(triangleHeight * 2 / 3f, 0)};
-        poligon.Mode = CsgPolygon3D.ModeEnum.Spin;
-        //pol.SpinDegrees = 360;
-        poligon.SpinSides = 3;
-        poligon.Position = new Vector3(0, 0, 0);
-        poligon.Basis = new Basis(new Vector3(0, 1, 0), (float)((270f / 180f) * Math.PI));
+        Vector3[] v = new Vector3[6];
+        for (int i = 0; i < 3; i++)
+        {
+            float ang = startAngle + i * 2.0f * Mathf.Pi / 3.0f;
+            float x = r * Mathf.Cos(ang);
+            float z = r * Mathf.Sin(ang);
 
-        return poligon;
+            v[i] = new Vector3(-x, 0.5f, z);
+            v[i + 3] = new Vector3(-x, -0.5f, z);
+        }
+
+        int[] tri =
+        {
+            //base
+            2,1,0,
+            //tapa
+            3,4,5,
+            //lados
+            0,1,4, 0,4,3,
+            1,2,5, 1,5,4,
+            2,0,3, 2,3,5
+        };
+
+        var st = new SurfaceTool();
+        st.Begin(Mesh.PrimitiveType.Triangles);
+
+        for (int i = 0; i < tri.Length; i += 3)
+        {
+            Vector3 a = v[tri[i]];
+            Vector3 b = v[tri[i + 1]];
+            Vector3 c = v[tri[i + 2]];
+
+            Vector3 n = (b - a).Cross(c - a).Normalized();
+
+            st.SetNormal(n); st.AddVertex(a);
+            st.SetNormal(n); st.AddVertex(b);
+            st.SetNormal(n); st.AddVertex(c);
+        }
+
+        return st.Commit();
     }
+
 }

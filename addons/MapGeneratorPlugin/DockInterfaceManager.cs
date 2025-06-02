@@ -6,10 +6,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using TFG_Godot.Properties;
 
 [Tool]
 public partial class DockInterfaceManager : Control
-{
+{   
     public enum Dimensions
     {
         D2, D3
@@ -269,15 +270,15 @@ public partial class DockInterfaceManager : Control
         }
     }
 
-    public void SaveZone(string name, Color color, int index = -1)
+    public void SaveZone(string name, Color color, Resources resources, int index = -1)
     {
         if (index == -1)
         {
-            GenerationManager.AddZone(name, color);
+            GenerationManager.AddZone(name, color, resources);
         }
         else
         {
-            GenerationManager.EditZone(index, name, color);
+            GenerationManager.EditZone(index, name, color, resources);
         }
         newZoneActive = false;
         editedZoneActive = false;
@@ -355,7 +356,7 @@ public partial class DockInterfaceManager : Control
                         zoneList.AddChild(editZone);
                         editZone.Owner = zoneList.Owner;
 
-                        editZone.GetNode<NewZoneContent>(".").Edit(zones[i].GetZoneName(), zones[i].GetColor());
+                        editZone.GetNode<NewZoneContent>(".").Edit(zones[i].GetZoneName(), zones[i].GetColor(), zones[i].GetResources());
                     }
                     else
                     {

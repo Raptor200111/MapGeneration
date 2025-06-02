@@ -1,17 +1,28 @@
 using Godot;
 using System;
-using System.Diagnostics;
-using System.Globalization;
+using System.IO;
 
 [Tool]
 public partial class NewZoneContent : PanelContainer
 {
-	private bool editing = false;
+    [Export] private NodePath ColorPickerPath;
+    [Export] private NodePath ZoneNameLineEditPath;
+    [Export] private NodePath ResourcePickerListPath;
+    [Export] private PackedScene ResourcePickerPrefabPath;
 
-	private DockInterfaceManager dockInterfaceManager;
-    public NewZoneContent()
-	{
-        dockInterfaceManager = DockInterfaceManager.Singleton;
+    private DockInterfaceManager dockInterfaceManager;
+    private ColorPickerButton _colorPicker;
+    private LineEdit _zoneNameLabel;
+    private Node _resourcePickerList;
+    private bool editing = false;
+
+    public override void _Ready()
+    {
+        _colorPicker = GetNode<ColorPickerButton>(ColorPickerPath);
+        _zoneNameLabel = GetNode<LineEdit>(ZoneNameLineEditPath);
+        _resourcePickerList = GetNode(ResourcePickerListPath);
+
+        _colorPicker.Color = new Color(new RandomNumberGenerator().Randi()) { A = 1.0f };
     }
 
     public void Initialize(DockInterfaceManager d)
@@ -20,12 +31,31 @@ public partial class NewZoneContent : PanelContainer
         //CustomMinimumSize = new Vector2(0, 200);
     }
 
-    public void Edit(string name, Color color)
+    public void Edit(string name, Color color, Resources resources)
 	{
 		editing = true;
 
-        GetNode<LineEdit>("./VBoxContainer/ZoneNameLabel").Text = name;
-		GetNode<ColorPickerButton>("./VBoxContainer/HBoxContainer/ColorPickerButton").Color = color;
+        _zoneNameLabel.Text = name;
+        _colorPicker.Color = color;
+
+        foreach (Resource r in resources.list)
+        {
+            Node aux = ResourcePickerPrefabPath.Instantiate();
+            _resourcePickerList.AddChild(aux);
+            aux.Owner = _resourcePickerList.Owner;
+
+            if (aux is ResourcePicker resourcePicker)
+            {
+                resourcePicker.SetResourcePath(r.Path);
+                resourcePicker.SetProbability((int)r.Probability);
+            }
+        }
+
+        //foreach (Node child in _resourcePickerList.GetChildren())
+        //{
+        //    if (child is ResourcePicker resourcePicker)
+        //        resources.AddResource(resourcePicker.GetResourcePath(), resourcePicker.GetProbability());
+        //}
     }
 
 	public void Save()
@@ -33,10 +63,10 @@ public partial class NewZoneContent : PanelContainer
 		if (editing)
 		{
 			editing = false;
-            dockInterfaceManager.SaveZone(GetNode<LineEdit>("./VBoxContainer/ZoneNameLabel").Text, GetNode<ColorPickerButton>("./VBoxContainer/HBoxContainer/ColorPickerButton").Color, GetIndex());
+            dockInterfaceManager.SaveZone(_zoneNameLabel.Text, _colorPicker.Color, GetResources(), GetIndex());
         }
 		else
-            dockInterfaceManager.SaveZone(GetNode<LineEdit>("./VBoxContainer/ZoneNameLabel").Text, GetNode<ColorPickerButton>("./VBoxContainer/HBoxContainer/ColorPickerButton").Color);
+            dockInterfaceManager.SaveZone(_zoneNameLabel.Text, _colorPicker.Color, GetResources());
     }
 
 	public void Delete()
@@ -48,5 +78,23 @@ public partial class NewZoneContent : PanelContainer
         }
 		else
             dockInterfaceManager.DeleteZone();
+    }
+
+    public void AddResourceButton()
+    {
+        Node aux = ResourcePickerPrefabPath.Instantiate();
+        _resourcePickerList.AddChild(aux);
+        aux.Owner = _resourcePickerList.Owner;
+    }
+
+    private Resources GetResources()
+    {
+        Resources resources = new Resources();
+        foreach (Node child in _resourcePickerList.GetChildren())
+        {
+            if (child is ResourcePicker resourcePicker)
+                resources.AddResource(resourcePicker.GetResourcePath(), resourcePicker.GetProbability());
+        }
+        return resources;
     }
 }

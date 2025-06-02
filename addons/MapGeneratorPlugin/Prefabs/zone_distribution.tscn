@@ -2,21 +2,19 @@
 
 [ext_resource type="Script" path="res://addons/MapGeneratorPlugin/ZoneDistribution.cs" id="1_n04ll"]
 
-[node name="ZoneDistribution" type="Control"]
+[node name="ZoneDistribution" type="PanelContainer"]
 custom_minimum_size = Vector2(0, 512)
-layout_mode = 3
+anchors_preset = -1
 anchor_right = 0.363
-anchor_bottom = 0.938
+anchor_bottom = 0.79
 offset_right = -0.175995
-offset_bottom = 0.175964
+offset_bottom = 0.0799866
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_n04ll")
 
 [node name="VBox_UI" type="VBoxContainer" parent="."]
-layout_mode = 0
-offset_right = 416.0
-offset_bottom = 490.0
+layout_mode = 2
 
 [node name="Grid" type="GridContainer" parent="VBox_UI"]
 layout_mode = 2

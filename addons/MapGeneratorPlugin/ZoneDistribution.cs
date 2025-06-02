@@ -67,8 +67,8 @@ public partial class ZoneDistribution : Control
 
         SpawnGridButtons();
 
-        int minimumSize = (int)BTN_SIZE.Y * (GRID_SIZE + 6);
-        this.CustomMinimumSize = new Vector2(0, minimumSize);
+        //int minimumSize = (int)BTN_SIZE.Y * (GRID_SIZE + 6);
+        //this.CustomMinimumSize = new Vector2(0, minimumSize);
 
         _btnSave.Pressed += OnSavePressed;
     }

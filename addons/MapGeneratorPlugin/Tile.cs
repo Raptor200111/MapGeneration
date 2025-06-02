@@ -13,9 +13,9 @@ public abstract partial class Tile : Node
 	}
 	public abstract Transform3D[,] GetMatrix(float blockScale, Vector2I chunkSize, Vector3 origin);
 
-	public abstract CsgPrimitive3D GetPoligon();
+	public abstract ArrayMesh GetMesh();
 
-	public static Tile GetTileType(TileType tileType)
+    public static Tile GetTileType(TileType tileType)
 	{
 		if (tileType == TileType.Square)
 		{

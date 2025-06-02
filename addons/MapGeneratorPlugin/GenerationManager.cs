@@ -1,7 +1,9 @@
 using Godot;
+using Godot.Collections;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using TFG_Godot.Properties;
 using static Tile;
 
 [Tool]
@@ -48,6 +50,8 @@ public partial class GenerationManager : Node
 
             if (editedSceneRoot != null)
             {
+                var sw = Stopwatch.StartNew();
+
                 var sceneFilePath = editedSceneRoot.SceneFilePath;
                 var sceneName = System.IO.Path.GetFileNameWithoutExtension(sceneFilePath);
 
@@ -99,8 +103,9 @@ public partial class GenerationManager : Node
                 }
                 else
                 {
-                    GD.Print($"Scene saved successfully at {sceneFilePath}");
-
+                    sw.Stop();
+                    GD.Print($"Scene saved successfully at {sceneFilePath}, time: " + sw.Elapsed);
+                    
                     EditorInterface.Singleton.ReloadSceneFromPath(sceneFilePath);
                 }
             }
@@ -113,10 +118,10 @@ public partial class GenerationManager : Node
             GD.Print("Generation Manager already started.");
     }
 
-    public void AddZone(String zoneName, Color color)
+    public void AddZone(String zoneName, Color color, Resources resources)
     {
         Zone zone = new Zone();
-        zone.Initialize(zoneName, color);
+        zone.Initialize(zoneName, color, resources);
         _zones.Add(zone);
     }
 
@@ -125,9 +130,9 @@ public partial class GenerationManager : Node
         _zones.Add(zone);
     }
 
-    public void EditZone(int index, String zoneName, Color color)
+    public void EditZone(int index, String zoneName, Color color, Resources resources)
     {
-        _zones[index].Initialize(zoneName, color);
+        _zones[index].Initialize(zoneName, color, resources);
     }
 
     public void DeleteZone(int index)

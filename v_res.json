@@ -1,7 +1,7 @@
 {
 	"BlockSize": "1",
 	"ChunkDeep": "100",
-	"ChunkWide": "100",
+	"ChunkWide": "100100",
 	"CoherenceTable": [
 		[
 			0,
