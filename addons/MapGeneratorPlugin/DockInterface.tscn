@@ -1,18 +1,36 @@
-[gd_scene load_steps=3 format=3 uid="uid://bxmrn4f6bt0sf"]
+[gd_scene load_steps=5 format=3 uid="uid://bxmrn4f6bt0sf"]
 
 [ext_resource type="Script" path="res://addons/MapGeneratorPlugin/DockInterfaceManager.cs" id="1_mux7b"]
+[ext_resource type="PackedScene" uid="uid://dhaq1vxvri7b3" path="res://addons/MapGeneratorPlugin/Prefabs/zone_content.tscn" id="2_1cr4n"]
+[ext_resource type="PackedScene" uid="uid://csuy3scwykqaa" path="res://addons/MapGeneratorPlugin/Prefabs/new_zone_content.tscn" id="3_6nfc3"]
 [ext_resource type="PackedScene" uid="uid://drodee6urrm10" path="res://addons/MapGeneratorPlugin/Prefabs/zone_distribution.tscn" id="4_atoo4"]
 
 [node name="MG_Control" type="ScrollContainer"]
 anchors_preset = -1
 anchor_right = 0.498
 anchor_bottom = 2.529
-offset_right = 0.303955
-offset_bottom = 0.208008
+offset_left = 57.0
+offset_top = 202.0
+offset_right = 57.304
+offset_bottom = 202.208
 grow_horizontal = 2
 grow_vertical = 2
 horizontal_scroll_mode = 0
 script = ExtResource("1_mux7b")
+zoneContentPrefab = ExtResource("2_1cr4n")
+newZoneContentPrefab = ExtResource("3_6nfc3")
+dimesionSwitchPath = NodePath("MG_List/DimensionContainer/DimensionButton")
+zoneDistributionPath = NodePath("MG_List/ZoneContainer/ZoneDistribution")
+blockSizingLineEditPath = NodePath("MG_List/BlockSizingContainer/BlockSizingLineEdit")
+wideLineEditPath = NodePath("MG_List/ChunkSizingContainer/Inputs/wideLineEdit")
+deepLineEditPath = NodePath("MG_List/ChunkSizingContainer/Inputs/deepLineEdit")
+tileTypeOptionButtonPath = NodePath("MG_List/TileTypeOptionButton")
+seedLineEditPath = NodePath("MG_List/SeedContainer/Edits/SeedLineEdit")
+noZoneLabelPath = NodePath("MG_List/ZoneContainer/MarginContainer/NoZoneLabel")
+zoneListPath = NodePath("MG_List/ZoneContainer/MarginContainer/ScrollContainer/ZoneList")
+zoneScrollContainerPath = NodePath("MG_List/ZoneContainer/MarginContainer/ScrollContainer")
+marginContainerPath = NodePath("MG_List/ZoneContainer/MarginContainer")
+coherenceTableButtonPath = NodePath("MG_List/ZoneContainer/CoherenceTableButton")
 
 [node name="MG_List" type="VBoxContainer" parent="."]
 custom_minimum_size = Vector2(400, 0)
@@ -26,6 +44,35 @@ horizontal_alignment = 1
 [node name="RefreshButton" type="Button" parent="MG_List"]
 layout_mode = 2
 text = "⟳ Refresh ⟳"
+
+[node name="ConfigContainer" type="VBoxContainer" parent="MG_List"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MG_List/ConfigContainer"]
+layout_mode = 2
+text = "Configuration:"
+
+[node name="ConfigButtons" type="HBoxContainer" parent="MG_List/ConfigContainer"]
+layout_mode = 2
+
+[node name="LoadButton" type="Button" parent="MG_List/ConfigContainer/ConfigButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Load
+"
+
+[node name="SaveButton" type="Button" parent="MG_List/ConfigContainer/ConfigButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Save"
+
+[node name="ResetButton" type="Button" parent="MG_List/ConfigContainer/ConfigButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Reset/Empty"
+
+[node name="HSeparator5" type="HSeparator" parent="MG_List"]
+layout_mode = 2
 
 [node name="StaticDinamicContainer" type="HBoxContainer" parent="MG_List"]
 layout_mode = 2
@@ -57,6 +104,7 @@ horizontal_alignment = 2
 
 [node name="DimensionButton" type="CheckButton" parent="MG_List/DimensionContainer"]
 layout_mode = 2
+keep_pressed_outside = true
 
 [node name="3DLabel" type="Label" parent="MG_List/DimensionContainer"]
 layout_mode = 2
@@ -67,7 +115,6 @@ text = "3D"
 layout_mode = 2
 
 [node name="TileTypeOptionButton" type="OptionButton" parent="MG_List"]
-unique_name_in_owner = true
 layout_mode = 2
 selected = 0
 item_count = 4
@@ -87,10 +134,8 @@ layout_mode = 2
 text = "Block Side Size:"
 
 [node name="BlockSizingLineEdit" type="LineEdit" parent="MG_List/BlockSizingContainer"]
-unique_name_in_owner = true
 layout_mode = 2
-text = "1"
-placeholder_text = "units"
+placeholder_text = "1"
 
 [node name="ChunkSizingContainer" type="VBoxContainer" parent="MG_List"]
 layout_mode = 2
@@ -107,24 +152,21 @@ layout_mode = 2
 text = "wide:"
 
 [node name="wideLineEdit" type="LineEdit" parent="MG_List/ChunkSizingContainer/Inputs"]
-unique_name_in_owner = true
 layout_mode = 2
-placeholder_text = "blocks"
+placeholder_text = "100"
 
 [node name="deepLabel" type="Label" parent="MG_List/ChunkSizingContainer/Inputs"]
 layout_mode = 2
 text = "deep:"
 
 [node name="deepLineEdit" type="LineEdit" parent="MG_List/ChunkSizingContainer/Inputs"]
-unique_name_in_owner = true
 layout_mode = 2
-placeholder_text = "blocks"
+placeholder_text = "100"
 
 [node name="HSeparator2" type="HSeparator" parent="MG_List"]
 layout_mode = 2
 
 [node name="ZoneContainer" type="VBoxContainer" parent="MG_List"]
-unique_name_in_owner = true
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MG_List/ZoneContainer"]
@@ -142,7 +184,7 @@ text = "+"
 [node name="MarginContainer" type="MarginContainer" parent="MG_List/ZoneContainer"]
 layout_mode = 2
 
-[node name="EmptyLabel" type="Label" parent="MG_List/ZoneContainer/MarginContainer"]
+[node name="NoZoneLabel" type="Label" parent="MG_List/ZoneContainer/MarginContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.439216, 0.439216, 0.439216, 1)
 text = "No zones for now..."
@@ -169,15 +211,14 @@ layout_mode = 2
 [node name="SeedContainer" type="VBoxContainer" parent="MG_List"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MG_List/SeedContainer"]
+[node name="Label2" type="Label" parent="MG_List/SeedContainer"]
 layout_mode = 2
-text = "Seed:"
+text = "Noise Texture:"
 
 [node name="Edits" type="HBoxContainer" parent="MG_List/SeedContainer"]
 layout_mode = 2
 
 [node name="SeedLineEdit" type="LineEdit" parent="MG_List/SeedContainer/Edits"]
-unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "12345678"
@@ -187,68 +228,20 @@ placeholder_text = "Seed"
 layout_mode = 2
 text = "⟳"
 
-[node name="HSeparator4" type="HSeparator" parent="MG_List"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MG_List/SeedContainer"]
 layout_mode = 2
 
-[node name="HeightmapContainer" type="VBoxContainer" parent="MG_List"]
+[node name="SpinBox" type="SpinBox" parent="MG_List/SeedContainer/HBoxContainer"]
 layout_mode = 2
+min_value = 0.001
+step = 0.001
+value = 0.001
 
-[node name="Label" type="Label" parent="MG_List/HeightmapContainer"]
+[node name="SpinBox2" type="SpinBox" parent="MG_List/SeedContainer/HBoxContainer"]
 layout_mode = 2
-text = "HeightMap:"
-
-[node name="Label2" type="Label" parent="MG_List/HeightmapContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.439216, 0.439216, 0.439216, 1)
-text = "Randomly Generated"
-horizontal_alignment = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MG_List/HeightmapContainer"]
-layout_mode = 2
-
-[node name="Button" type="Button" parent="MG_List/HeightmapContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Import"
-
-[node name="Button2" type="Button" parent="MG_List/HeightmapContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Generate"
-
-[node name="Button3" type="Button" parent="MG_List/HeightmapContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Previsualize"
-
-[node name="HSeparator5" type="HSeparator" parent="MG_List"]
-layout_mode = 2
-
-[node name="ConfigContainer" type="VBoxContainer" parent="MG_List"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MG_List/ConfigContainer"]
-layout_mode = 2
-text = "Configuration:"
-
-[node name="ConfigButtons" type="HBoxContainer" parent="MG_List/ConfigContainer"]
-layout_mode = 2
-
-[node name="LoadButton" type="Button" parent="MG_List/ConfigContainer/ConfigButtons"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Load
-"
-
-[node name="SaveButton" type="Button" parent="MG_List/ConfigContainer/ConfigButtons"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Save"
-
-[node name="ResetButton" type="Button" parent="MG_List/ConfigContainer/ConfigButtons"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Reset/Empty"
+min_value = 0.001
+step = 0.001
+value = 0.001
 
 [node name="HSeparator6" type="HSeparator" parent="MG_List"]
 layout_mode = 2
@@ -266,12 +259,15 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Generate"
 
+[node name="HSeparator7" type="HSeparator" parent="MG_List"]
+layout_mode = 2
+
 [connection signal="pressed" from="MG_List/RefreshButton" to="." method="RefreshButtonPressed"]
+[connection signal="pressed" from="MG_List/ConfigContainer/ConfigButtons/LoadButton" to="." method="LoadConfigFromDialog"]
+[connection signal="pressed" from="MG_List/ConfigContainer/ConfigButtons/SaveButton" to="." method="SaveConfigAs"]
+[connection signal="pressed" from="MG_List/ConfigContainer/ConfigButtons/ResetButton" to="." method="ResetCurrentConfig"]
 [connection signal="toggled" from="MG_List/DimensionContainer/DimensionButton" to="." method="DimensionButtonToggle"]
 [connection signal="pressed" from="MG_List/ZoneContainer/HBoxContainer/Button" to="." method="PlusZoneButtonPressed"]
 [connection signal="pressed" from="MG_List/ZoneContainer/CoherenceTableButton" to="." method="CoherenceTableButtonPressed"]
 [connection signal="pressed" from="MG_List/SeedContainer/Edits/Button" to="." method="GenerateSeed"]
-[connection signal="pressed" from="MG_List/ConfigContainer/ConfigButtons/LoadButton" to="." method="LoadConfigFromDialog"]
-[connection signal="pressed" from="MG_List/ConfigContainer/ConfigButtons/SaveButton" to="." method="SaveConfigAs"]
-[connection signal="pressed" from="MG_List/ConfigContainer/ConfigButtons/ResetButton" to="." method="ResetCurrentConfig"]
 [connection signal="pressed" from="MG_List/ExecuteContainer/GenerateButton" to="." method="GenerateButtonPressed"]

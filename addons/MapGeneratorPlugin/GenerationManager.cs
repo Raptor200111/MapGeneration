@@ -38,7 +38,7 @@ public partial class GenerationManager : Node
         return EditorInterface.Singleton.GetEditedSceneRoot();
     }
 
-	public void Start(float blockScale, Vector2I chunkSize, Tile.TileType tileType, uint seed, int[,] coherenceTable)
+	public void Start(float blockScale, Vector2I chunkSize, Tile.TileType tileType, uint seed, int[,] coherenceTable, bool threeDee, int[] heightOverride)
 	{
         if (AlreadyStarted())
         {
@@ -85,7 +85,7 @@ public partial class GenerationManager : Node
                 chunkMatrix[0][0].Name = "InitialChunk";
                 sceneInstance.AddChild(chunkMatrix[0][0]);
                 chunkMatrix[0][0].Owner = sceneInstance;
-                chunkMatrix[0][0].Initialize(Basis.Identity, new Vector3(0, 0, 0), this.blockScale, this.chunkSize, coherenceTable);
+                chunkMatrix[0][0].Initialize(Basis.Identity, new Vector3(0, 0, 0), this.blockScale, this.chunkSize, coherenceTable, threeDee, heightOverride);
                 
                 //Pack Scene
                 var packResult = packedScene.Pack(sceneInstance);
@@ -118,7 +118,7 @@ public partial class GenerationManager : Node
             GD.Print("Generation Manager already started.");
     }
 
-    public void AddZone(String zoneName, Color color, Resources resources)
+    public void AddZone(String zoneName, Color color, ResourcePathList resources)
     {
         Zone zone = new Zone();
         zone.Initialize(zoneName, color, resources);
@@ -130,7 +130,7 @@ public partial class GenerationManager : Node
         _zones.Add(zone);
     }
 
-    public void EditZone(int index, String zoneName, Color color, Resources resources)
+    public void EditZone(int index, String zoneName, Color color, ResourcePathList resources)
     {
         _zones[index].Initialize(zoneName, color, resources);
     }

@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.Intrinsics.X86;
 
@@ -44,7 +45,7 @@ public partial class Chunk : Node3D
 
     private void OnChunkCreated()
     {
-        _seed = DockInterfaceManager.Singleton.GenerationManager.GetSeed();
+        _seed = MapGeneratorPlugin.Singleton.GenerationManager.GetSeed();
 
         /*
         _noise = new FastNoiseLite();
@@ -62,13 +63,13 @@ public partial class Chunk : Node3D
 	{
 	}
 
-	public void Initialize(Basis basis, Vector3 pos, float blockScale, Vector2I chunkSize, int[,] coherenceTable)
+	public void Initialize(Basis basis, Vector3 pos, float blockScale, Vector2I chunkSize, int[,] coherenceTable, bool threeDee, int[] heightOverride)
 	{
         this.blockScale = blockScale;
         this.chunkSize = chunkSize;
 
-		_zones = DockInterfaceManager.Singleton.GenerationManager.GetZones();
-        _seed = DockInterfaceManager.Singleton.GenerationManager.GetSeed();
+		_zones = MapGeneratorPlugin.Singleton.GenerationManager.GetZones();
+        _seed = MapGeneratorPlugin.Singleton.GenerationManager.GetSeed();
 
         if (_zones == null || _zones.Length == 0) 
 		{
@@ -77,8 +78,13 @@ public partial class Chunk : Node3D
 		}
 
         Transform3D[,] matrix = _tile.GetMatrix(blockScale, chunkSize, this.Position);
+
+        Dictionary<int, Dictionary<int, List<Vector3>>> zonesUsed;
         
-        var zonesUsed = PerlinNoise(chunkSize.X, chunkSize.Y, coherenceTable);
+        if (threeDee)
+            zonesUsed = Noise3D(chunkSize.X, chunkSize.Y, coherenceTable, heightOverride);
+        else //if (dimension == Dimension.D2)
+            zonesUsed = Noise2D(chunkSize.X, chunkSize.Y, coherenceTable);
 
         foreach (var auxZone in zonesUsed)
         {
@@ -89,32 +95,53 @@ public partial class Chunk : Node3D
 
             foreach (var auxResource in auxZone.Value)
             {
+                var mesh = _zones[auxZone.Key].GetResource(auxResource.Key).GetMesh();
+                var path = _zones[auxZone.Key].GetResource(auxResource.Key).Path;
+                if (mesh == null)
+                {
+                    GD.PushError($"[{Name}] El recurso {{{path}}} no contiene Mesh.");
+                    continue;
+                }
+
+                var aabb = mesh.GetAabb();
+                var size = aabb.Size;
+                float s = 1.0f / Mathf.Max(size.X, size.Z);
+                Basis scaleBasis = Basis.Identity.Scaled(Vector3.One * s);
+
                 var mm = new MultiMesh
                 {
-                    Mesh = _tile.GetMesh(),//hay que cambiarlo
+                    Mesh = mesh,
                     TransformFormat = MultiMesh.TransformFormatEnum.Transform3D,
-                    InstanceCount = auxResource.Value.Count
+                    InstanceCount = auxResource.Value.Count,
+                    VisibleInstanceCount = auxResource.Value.Count
                 };
+
+                float liftY = -(aabb.Position.Y * s);
 
                 int i = 0;
                 foreach (var auxPos in auxResource.Value)
                 {
-                    mm.SetInstanceTransform(i++, matrix[auxPos.X, auxPos.Y]);
+                    Transform3D t = matrix[(int)auxPos.X, (int)auxPos.Z];
+                    t.Origin.Y = auxPos.Y * 10;
+                    t.Basis *= scaleBasis;
+                    t.Origin.Y += liftY;
+                    mm.SetInstanceTransform(i++, t);
                 }
 
                 var mmi = new MultiMeshInstance3D
                 {
                     Name = "Resource_" + auxResource.Key.ToString(),
-                    Multimesh = mm
+                    Multimesh = mm,
+                    //MaterialOverride = mesh.SurfaceGetMaterialCount() > 0 ? mesh.SurfaceGetMaterial(0) : null
                 };
 
                 zoneChild.AddChild(mmi);
                 mmi.Owner = zoneChild.Owner;
             }
-        } 
+        }
     }
 
-    private Dictionary<int, Dictionary<int, List<Vector2I>>> PerlinNoise(int width, int height, int[,] coherenceTable)
+    private Dictionary<int, Dictionary<int, List<Vector3>>> Noise3D(int width, int length, int[,] coherenceTable, int[] heightOverride)
     {
         FastNoiseLite tempNoise = new FastNoiseLite();
         tempNoise.SetNoiseType(FastNoiseLite.NoiseTypeEnum.SimplexSmooth);
@@ -133,9 +160,75 @@ public partial class Chunk : Node3D
         moistNoise.DomainWarpEnabled = false;
         moistNoise.Offset = new Vector3(0, 0, 0);
 
-        Resources[] r = GetZonesResources();
+        FastNoiseLite heightMap = new FastNoiseLite();
+        heightMap.SetNoiseType(FastNoiseLite.NoiseTypeEnum.SimplexSmooth);
+        //int reverseSeed = _seed.ToString().Reverse().Aggregate(0, (b, x) => 10 * b + x - '0');
+        heightMap.SetSeed((int)_seed + 2);
+        heightMap.SetFrequency(0.05f);
+        heightMap.SetFractalType(FastNoiseLite.FractalTypeEnum.None);
+        heightMap.DomainWarpEnabled = false;
+        heightMap.Offset = new Vector3(0, 0, 0);
+
+        ResourcePathList[] r = GetZonesResources();
+
+        var zonesUsed = new Dictionary<int, Dictionary<int, List<Vector3>>>();
+
+        for (int j = 0; j < length; j++)
+        {
+            for (int i = 0; i < width; i++)
+            {
+                int indiTempNoise = 9 - Mathf.Clamp((int)((tempNoise.GetNoise2D(j, i) + 1) * 5), 0, 9); // from 0 to 9 both inclusive
+                int indiMoistNoise = Mathf.Clamp((int)((moistNoise.GetNoise2D(j, i) + 1) * 5), 0, 9);
+                int resourceNoise = (indiTempNoise + indiMoistNoise) * 5;
+                float height = heightMap.GetNoise2D(j, i) + 1f * 5f;
+
+                int zoneIdHeight = heightOverride[Mathf.Clamp((int)height, 0, 9)];
+                int zoneId = coherenceTable[indiTempNoise, indiMoistNoise];
+                if (zoneId != -1 || zoneIdHeight != -1)
+                {
+                    if (zoneIdHeight != -1)
+                        zoneId = zoneIdHeight;
+
+                    int resourceId = r[zoneId].GetResourceIndexByProbanility(resourceNoise);
+                    //GD.Print("Zone: " + zoneId + " Resource: " + resourceId + " at (" + i + ", " + j + ")");
+                    //GD.Print("indiTempNoise:" + indiTempNoise + " indiMoistNoise:" + indiMoistNoise + "NoiseSum: " + resourceNoise);
+
+
+                    if (!zonesUsed.ContainsKey(zoneId))
+                        zonesUsed[zoneId] = new Dictionary<int, List<Vector3>>();
+                    if (!zonesUsed[zoneId].ContainsKey(resourceId))
+                        zonesUsed[zoneId][resourceId] = new List<Vector3>();
+
+                    zonesUsed[zoneId][resourceId].Add(new Vector3(i, height, j));
+                }
+            }
+        }
+
+        return zonesUsed;
+    }
+
+    private Dictionary<int, Dictionary<int, List<Vector3>>> Noise2D(int width, int height, int[,] coherenceTable)
+    {
+        FastNoiseLite tempNoise = new FastNoiseLite();
+        tempNoise.SetNoiseType(FastNoiseLite.NoiseTypeEnum.SimplexSmooth);
+        tempNoise.SetSeed((int)_seed);
+        tempNoise.SetFrequency(0.05f);
+        tempNoise.SetFractalType(FastNoiseLite.FractalTypeEnum.None);
+        tempNoise.DomainWarpEnabled = false;
+        tempNoise.Offset = new Vector3(0, 0, 0);
+
+        FastNoiseLite moistNoise = new FastNoiseLite();
+        moistNoise.SetNoiseType(FastNoiseLite.NoiseTypeEnum.SimplexSmooth);
+        //int reverseSeed = _seed.ToString().Reverse().Aggregate(0, (b, x) => 10 * b + x - '0');
+        moistNoise.SetSeed((int)_seed + 1);
+        moistNoise.SetFrequency(0.05f);
+        moistNoise.SetFractalType(FastNoiseLite.FractalTypeEnum.None);
+        moistNoise.DomainWarpEnabled = false;
+        moistNoise.Offset = new Vector3(0, 0, 0);
+
+        ResourcePathList[] r = GetZonesResources();
         
-        var zonesUsed = new Dictionary<int, Dictionary<int, List<Vector2I>>>();
+        var zonesUsed = new Dictionary<int, Dictionary<int, List<Vector3>>>();
 
         for (int j = 0; j < height; j++)
         {
@@ -151,16 +244,16 @@ public partial class Chunk : Node3D
                 if (zoneId != -1)
                 {
                     int resourceId = r[zoneId].GetResourceIndexByProbanility(resourceNoise);
-                    GD.Print("Zone: " + zoneId + " Resource: " + resourceId + " at (" + i + ", " + j + ")");
-                    GD.Print("indiTempNoise:" + indiTempNoise + " indiMoistNoise:" + indiMoistNoise + "NoiseSum: " + resourceNoise);
+                    //GD.Print("Zone: " + zoneId + " Resource: " + resourceId + " at (" + i + ", " + j + ")");
+                    //GD.Print("indiTempNoise:" + indiTempNoise + " indiMoistNoise:" + indiMoistNoise + "NoiseSum: " + resourceNoise);
 
 
                     if (!zonesUsed.ContainsKey(zoneId))
-                        zonesUsed[zoneId] = new Dictionary<int, List<Vector2I>>();
+                        zonesUsed[zoneId] = new Dictionary<int, List<Vector3>>();
                     if (!zonesUsed[zoneId].ContainsKey(resourceId))
-                        zonesUsed[zoneId][resourceId] = new List<Vector2I>();
+                        zonesUsed[zoneId][resourceId] = new List<Vector3>();
 
-                    zonesUsed[zoneId][resourceId].Add(new Vector2I(i, j));
+                    zonesUsed[zoneId][resourceId].Add(new Vector3(i, 0, j));
                 }
             }
         }
@@ -173,9 +266,9 @@ public partial class Chunk : Node3D
         return pos.x >= 0 && pos.y >= 0 && pos.x < chunkSize.X && pos.y < chunkSize.Y;
     }
 
-    private Resources[] GetZonesResources()
+    private ResourcePathList[] GetZonesResources()
     {
-        Resources[] zonesWithResources = new Resources[_zones.Length];
+        ResourcePathList[] zonesWithResources = new ResourcePathList[_zones.Length];
 
         int zondeId = 0;
         foreach (Zone z in _zones)

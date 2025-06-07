@@ -31,14 +31,14 @@ public partial class NewZoneContent : PanelContainer
         //CustomMinimumSize = new Vector2(0, 200);
     }
 
-    public void Edit(string name, Color color, Resources resources)
+    public void Edit(string name, Color color, ResourcePathList resources)
 	{
 		editing = true;
 
         _zoneNameLabel.Text = name;
         _colorPicker.Color = color;
 
-        foreach (Resource r in resources.list)
+        foreach (ResourcePath r in resources.list)
         {
             Node aux = ResourcePickerPrefabPath.Instantiate();
             _resourcePickerList.AddChild(aux);
@@ -87,9 +87,9 @@ public partial class NewZoneContent : PanelContainer
         aux.Owner = _resourcePickerList.Owner;
     }
 
-    private Resources GetResources()
+    private ResourcePathList GetResources()
     {
-        Resources resources = new Resources();
+        ResourcePathList resources = new ResourcePathList();
         foreach (Node child in _resourcePickerList.GetChildren())
         {
             if (child is ResourcePicker resourcePicker)

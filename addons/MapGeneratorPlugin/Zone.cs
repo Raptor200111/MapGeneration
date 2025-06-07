@@ -5,38 +5,65 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Schema;
 
-public struct Resource
+public struct ResourcePath
 {
     public string Path;
     public int Probability;
-    public Resource(string path, int probability)
+    public ResourcePath(string path, int probability)
     {
         Path = path;
         Probability = probability;
     }
-}
 
-public struct Resources
-{
-    public List<Resource> list;
-    public Resources()
+    public Mesh GetMesh()
     {
-        list = new List<Resource>();
+        var res = GD.Load(Path);
+        if (res is Mesh directMesh) return directMesh;
+        if (res is PackedScene packed)
+        {
+            var root = packed.Instantiate();
+            var stack = new System.Collections.Generic.Stack<Node>();
+            stack.Push(root);
+            while (stack.Count > 0)
+            {
+                var current = stack.Pop();
+                if (current is MeshInstance3D mi && mi.Mesh != null)
+                {
+                    root.QueueFree();
+                    return mi.Mesh;
+                }
+                foreach (Node child in current.GetChildren())
+                    stack.Push(child);
+            }
+            root.QueueFree();
+        }
+        //GD.PushError("El recurso {{" + Path + "} no contiene un Mesh valido.");
+        return null;
     }
 
-    public Resources(Godot.Collections.Dictionary<string, Variant> json)
+}
+
+public struct ResourcePathList
+{
+    public List<ResourcePath> list;
+    public ResourcePathList()
     {
-        list = new List<Resource>();
+        list = new List<ResourcePath>();
+    }
+
+    public ResourcePathList(Godot.Collections.Dictionary<string, Variant> json)
+    {
+        list = new List<ResourcePath>();
         foreach (var kvp in json)
         {
-            list.Add(new Resource(kvp.Key, (int)kvp.Value));
+            list.Add(new ResourcePath(kvp.Key, (int)kvp.Value));
         }
     }
 
     public Godot.Collections.Dictionary<string, Variant> ToJson()
     {
         Godot.Collections.Dictionary<string, Variant> resourcesJson = new Godot.Collections.Dictionary<string, Variant>();
-        foreach (Resource resource in list)
+        foreach (ResourcePath resource in list)
         {
             resourcesJson.Add(resource.Path, resource.Probability);
         }
@@ -57,15 +84,15 @@ public struct Resources
         return list.Count-1;
     }
 
-    public Resource GetResourceByIndex(int index)
+    public ResourcePath GetResourceByIndex(int index)
     {
         return list[index];
     }
 
-    public void GetResourceIndexByPath(string path, out int index, out Resource resource)
+    public void GetResourceIndexByPath(string path, out int index, out ResourcePath resource)
     {
         index = -1;
-        resource = new Resource();
+        resource = new ResourcePath();
         for (int i = 0; i < list.Count; i++)
         {
             if (list[i].Path == path)
@@ -79,7 +106,7 @@ public struct Resources
 
     public void AddResource(string path, int probability)
     {
-        list.Add(new Resource(path, probability));
+        list.Add(new ResourcePath(path, probability));
     }
 }
 
@@ -88,7 +115,7 @@ public partial class Zone : Node
     private StandardMaterial3D _baseMaterial;
     string zoneName;
     //Dictionary<string, Variant> resources;
-    private Resources resources;// = new List<Resource>();
+    private ResourcePathList resources;// = new List<Resource>();
 
     public Zone()
 	{
@@ -96,7 +123,7 @@ public partial class Zone : Node
         _baseMaterial.AlbedoColor = new Color(new RandomNumberGenerator().Randf(), new RandomNumberGenerator().Randf(), new RandomNumberGenerator().Randf());
     }
 
-	public void Initialize(String zoneName, Color color, Resources resources)
+	public void Initialize(String zoneName, Color color, ResourcePathList resources)
 	{
         _baseMaterial.AlbedoColor = color;
         this.zoneName = zoneName;
@@ -132,18 +159,21 @@ public partial class Zone : Node
             ["Resources"] = resources.ToJson()
         };
     }
-
     
-
     static public Zone JsonToZone(Godot.Collections.Dictionary<string, Variant> dic)
     {
         Zone zone = new Zone();
-        zone.Initialize(dic["Name"].AsString(), new Color((uint)dic["Color"]), new Resources((Godot.Collections.Dictionary<string, Variant>)dic["Resources"]) );
+        zone.Initialize(dic["Name"].AsString(), new Color((uint)dic["Color"]), new ResourcePathList((Godot.Collections.Dictionary<string, Variant>)dic["Resources"]) );
         return zone;
     }
 
-    public Resources GetResources()
+    public ResourcePathList GetResources()
     {
         return resources;
+    }
+
+    public ResourcePath GetResource(int index)
+    {
+        return resources.GetResourceByIndex(index);
     }
 }

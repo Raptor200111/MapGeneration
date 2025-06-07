@@ -4,4 +4,4 @@ extends EditorResourcePicker
 class_name AddonResourcePicker
 
 func _ready():
-	base_type = "PackedScene"
+	base_type = "PackedScene,Mesh"

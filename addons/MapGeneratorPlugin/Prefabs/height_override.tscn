@@ -1,0 +1,49 @@
+[gd_scene load_steps=3 format=3 uid="uid://b8hhhm78n1qru"]
+
+[ext_resource type="Script" path="res://addons/MapGeneratorPlugin/HeightOverride.cs" id="1_ahvwb"]
+[ext_resource type="PackedScene" uid="uid://kklmuofjhoqp" path="res://addons/MapGeneratorPlugin/Prefabs/color_rect_prefab.tscn" id="2_b05cf"]
+
+[node name="HeightOverride" type="GridContainer"]
+theme_override_constants/h_separation = 2
+theme_override_constants/v_separation = 2
+script = ExtResource("1_ahvwb")
+
+[node name="ColorRect" parent="." instance=ExtResource("2_b05cf")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect2" parent="." instance=ExtResource("2_b05cf")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect3" parent="." instance=ExtResource("2_b05cf")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect4" parent="." instance=ExtResource("2_b05cf")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect5" parent="." instance=ExtResource("2_b05cf")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect6" parent="." instance=ExtResource("2_b05cf")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect7" parent="." instance=ExtResource("2_b05cf")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect8" parent="." instance=ExtResource("2_b05cf")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect9" parent="." instance=ExtResource("2_b05cf")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect10" parent="." instance=ExtResource("2_b05cf")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2

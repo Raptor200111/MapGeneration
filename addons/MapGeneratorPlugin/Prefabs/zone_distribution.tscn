@@ -1,6 +1,14 @@
-[gd_scene load_steps=2 format=3 uid="uid://drodee6urrm10"]
+[gd_scene load_steps=5 format=3 uid="uid://drodee6urrm10"]
 
 [ext_resource type="Script" path="res://addons/MapGeneratorPlugin/ZoneDistribution.cs" id="1_n04ll"]
+[ext_resource type="PackedScene" uid="uid://b8hhhm78n1qru" path="res://addons/MapGeneratorPlugin/Prefabs/height_override.tscn" id="2_j8jdh"]
+[ext_resource type="PackedScene" uid="uid://n4mh8kn0sls3" path="res://addons/MapGeneratorPlugin/Prefabs/coherence_table.tscn" id="2_xpxcn"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_tuteh"]
+line_spacing = 0.0
+font_size = 11
+shadow_size = 0
+shadow_offset = Vector2(0, 0)
 
 [node name="ZoneDistribution" type="PanelContainer"]
 custom_minimum_size = Vector2(0, 512)
@@ -12,13 +20,297 @@ offset_bottom = 0.0799866
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_n04ll")
+zonesHBoxPath = NodePath("VBox_UI/HBox_Zones")
+coherenceTablePath = NodePath("VBox_UI/HBoxContainer/CoherenceTable")
+heightOverridePath = NodePath("VBox_UI/HBoxContainer/HeightOverride")
+heightOverrideNumbersPath = NodePath("VBox_UI/HBoxContainer/HeightNumbers")
 
 [node name="VBox_UI" type="VBoxContainer" parent="."]
 layout_mode = 2
 
-[node name="Grid" type="GridContainer" parent="VBox_UI"]
+[node name="ClearButton" type="Button" parent="VBox_UI"]
 layout_mode = 2
-columns = 11
+text = "Clear"
+
+[node name="HBoxContainer" type="GridContainer" parent="VBox_UI"]
+layout_mode = 2
+columns = 4
+
+[node name="HeightNumbers" type="GridContainer" parent="VBox_UI/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 2
+theme_override_constants/v_separation = 2
+
+[node name="Label" type="Label" parent="VBox_UI/HBoxContainer/HeightNumbers"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.9"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="VBox_UI/HBoxContainer/HeightNumbers"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.8"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label3" type="Label" parent="VBox_UI/HBoxContainer/HeightNumbers"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.7"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label4" type="Label" parent="VBox_UI/HBoxContainer/HeightNumbers"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.6"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label5" type="Label" parent="VBox_UI/HBoxContainer/HeightNumbers"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.5"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label6" type="Label" parent="VBox_UI/HBoxContainer/HeightNumbers"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.4"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label7" type="Label" parent="VBox_UI/HBoxContainer/HeightNumbers"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.3"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label8" type="Label" parent="VBox_UI/HBoxContainer/HeightNumbers"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.2"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label9" type="Label" parent="VBox_UI/HBoxContainer/HeightNumbers"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.1"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label10" type="Label" parent="VBox_UI/HBoxContainer/HeightNumbers"]
+clip_contents = true
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.0"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HeightOverride" parent="VBox_UI/HBoxContainer" instance=ExtResource("2_j8jdh")]
+layout_mode = 2
+
+[node name="VBoxContainer3" type="GridContainer" parent="VBox_UI/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 2
+theme_override_constants/v_separation = 2
+
+[node name="Label" type="Label" parent="VBox_UI/HBoxContainer/VBoxContainer3"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.9"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="VBox_UI/HBoxContainer/VBoxContainer3"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.8"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label3" type="Label" parent="VBox_UI/HBoxContainer/VBoxContainer3"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.7"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label4" type="Label" parent="VBox_UI/HBoxContainer/VBoxContainer3"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.6"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label5" type="Label" parent="VBox_UI/HBoxContainer/VBoxContainer3"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.5"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label6" type="Label" parent="VBox_UI/HBoxContainer/VBoxContainer3"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.4"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label7" type="Label" parent="VBox_UI/HBoxContainer/VBoxContainer3"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.3"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label8" type="Label" parent="VBox_UI/HBoxContainer/VBoxContainer3"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.2"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label9" type="Label" parent="VBox_UI/HBoxContainer/VBoxContainer3"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.1"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label10" type="Label" parent="VBox_UI/HBoxContainer/VBoxContainer3"]
+clip_contents = true
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.0"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CoherenceTable" parent="VBox_UI/HBoxContainer" instance=ExtResource("2_xpxcn")]
+layout_mode = 2
+
+[node name="Control" type="Control" parent="VBox_UI/HBoxContainer"]
+layout_mode = 2
+
+[node name="Control2" type="Control" parent="VBox_UI/HBoxContainer"]
+layout_mode = 2
+
+[node name="Control3" type="Control" parent="VBox_UI/HBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer4" type="GridContainer" parent="VBox_UI/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 2
+theme_override_constants/v_separation = 2
+columns = 10
+
+[node name="Label" type="Label" parent="VBox_UI/HBoxContainer/VBoxContainer4"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.0"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+justification_flags = 9
+clip_text = true
+
+[node name="Label2" type="Label" parent="VBox_UI/HBoxContainer/VBoxContainer4"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.1"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label3" type="Label" parent="VBox_UI/HBoxContainer/VBoxContainer4"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.2"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label4" type="Label" parent="VBox_UI/HBoxContainer/VBoxContainer4"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.3"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label5" type="Label" parent="VBox_UI/HBoxContainer/VBoxContainer4"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.4"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label6" type="Label" parent="VBox_UI/HBoxContainer/VBoxContainer4"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.5"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label7" type="Label" parent="VBox_UI/HBoxContainer/VBoxContainer4"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.6"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label8" type="Label" parent="VBox_UI/HBoxContainer/VBoxContainer4"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.7"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label9" type="Label" parent="VBox_UI/HBoxContainer/VBoxContainer4"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.8"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label10" type="Label" parent="VBox_UI/HBoxContainer/VBoxContainer4"]
+clip_contents = true
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "0.9"
+label_settings = SubResource("LabelSettings_tuteh")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="VBox_UI"]
 layout_mode = 2
@@ -26,6 +318,9 @@ layout_mode = 2
 [node name="HBox_Zones" type="HBoxContainer" parent="VBox_UI"]
 layout_mode = 2
 
-[node name="Btn_Save" type="Button" parent="VBox_UI"]
+[node name="SaveButton" type="Button" parent="VBox_UI"]
 layout_mode = 2
 text = "Save"
+
+[connection signal="pressed" from="VBox_UI/ClearButton" to="." method="ClearCoherenceTable"]
+[connection signal="pressed" from="VBox_UI/SaveButton" to="." method="OnSavePressed"]

@@ -7,26 +7,16 @@ public partial class ZoneDistribution : Control
 {
     private DockInterfaceManager _dockInterfaceManager;
 
-    private const int GRID_SIZE = 10;
-    private static readonly Vector2 BTN_SIZE = new(32, 32);
-
     private readonly Color selectedColor = Colors.MediumVioletRed;
     private readonly Color deselectedColor = Colors.Black;
 
     private readonly int selectedBorderWidth = 4;
     private readonly int deselectedBorderWidth = 2;
 
-    private Color[] _zones =
-    {
-        new Color("#DC143C"),
-        new Color("#228B22"),
-        new Color("#1E90FF"),
-        new Color("#FFA500"),
-        new Color("#9400D3")
-    };
+    private Color[] _zonesColors;
 
     private int _currentZoneIdx = 0;
-    private int[,] _paintMap = new int[GRID_SIZE, GRID_SIZE];
+    private bool _threeDee = false;
 
     private StyleBoxFlat emptySB = new StyleBoxFlat
     {
@@ -38,42 +28,59 @@ public partial class ZoneDistribution : Control
         BorderColor = new Color("#666")
     };
 
-    private HBoxContainer _zonesHBox;
-    private GridContainer _gridRef;
-    private Button _btnSave;
+    [Export] NodePath zonesHBoxPath;
+    [Export] NodePath coherenceTablePath;
+    [Export] NodePath heightOverridePath;
+    [Export] NodePath heightOverrideNumbersPath;
 
-    public void Initialize(DockInterfaceManager dockInterfaceManager)
-    {
-        _dockInterfaceManager = dockInterfaceManager;
-        _zones = GetZonesColors();
-        SpawnZoneButtons();
-        PaintGrid();
-    }
+
+    private HBoxContainer _zonesHBox;
+    private CoherenceTable _coherenceTable;
+    private HeightOverride _heightOverride;
+    private Control _heightOverrideNumbers;
 
     public override void _Ready()
     {
-        for (int y = 0; y < GRID_SIZE; y++)
-            for (int x = 0; x < GRID_SIZE; x++)
-                _paintMap[y, x] = -1;
+        _zonesHBox = GetNode<HBoxContainer>(zonesHBoxPath);
+        _coherenceTable = GetNode<CoherenceTable>(coherenceTablePath);
+        _heightOverride = GetNode<HeightOverride>(heightOverridePath);
+        _heightOverrideNumbers = GetNode<Control>(heightOverrideNumbersPath);
 
-        _zonesHBox = GetNode<HBoxContainer>("VBox_UI/HBox_Zones");
-        _gridRef = GetNode<GridContainer>("VBox_UI/Grid");
-        _btnSave = GetNode<Button>("VBox_UI/Btn_Save");
-
-        /*
-        _zones = GetZonesColors();
+        _zonesColors = GetZonesColors();
         SpawnZoneButtons();
-        */
 
-        SpawnGridButtons();
+
+        //SpawnGridButtons();
 
         //int minimumSize = (int)BTN_SIZE.Y * (GRID_SIZE + 6);
         //this.CustomMinimumSize = new Vector2(0, minimumSize);
-
-        _btnSave.Pressed += OnSavePressed;
     }
 
-    private Color[] GetZonesColors()
+    public void Initialize(DockInterfaceManager dockInterfaceManager, int[,] table, bool threeDee, int[] heightOverride)
+    {
+        _dockInterfaceManager = MapGeneratorPlugin.Singleton;
+        _zonesColors = GetZonesColors();
+        SpawnZoneButtons();
+        _coherenceTable.SetCoherenceTable(table, _zonesColors);
+        _threeDee = threeDee;
+        if (_threeDee == true)
+        { 
+            _heightOverride.SetHeightOverride(heightOverride, _zonesColors);
+            _heightOverride.Visible = _heightOverrideNumbers.Visible = true;
+        }
+        else
+        {
+            _heightOverride.Visible = _heightOverrideNumbers.Visible = false;
+        }
+    }
+
+    public void Show(bool threeDee)
+    {
+        _threeDee = threeDee;
+        _heightOverride.Visible = _heightOverrideNumbers.Visible = _threeDee;
+    }
+
+    public Color[] GetZonesColors()
     {
         if (_dockInterfaceManager == null)
             return new Color[0];
@@ -98,11 +105,11 @@ public partial class ZoneDistribution : Control
             }
         }
 
-        for (int idx = 0; idx < _zones.Length; idx++)
+        for (int idx = 0; idx < _zonesColors.Length; idx++)
         {
             var zBtn = new Button
             {
-                CustomMinimumSize = BTN_SIZE,
+                CustomMinimumSize = new Vector2(20, 20),
                 ToggleMode = true,
                 ButtonPressed = idx == _currentZoneIdx
             };
@@ -111,7 +118,7 @@ public partial class ZoneDistribution : Control
             {
                 var sb = new StyleBoxFlat
                 {
-                    BgColor = _zones[idx],
+                    BgColor = _zonesColors[idx],
                     
                     BorderWidthTop = selectedBorderWidth,
                     BorderWidthBottom = selectedBorderWidth,
@@ -128,7 +135,7 @@ public partial class ZoneDistribution : Control
             else { 
                 var sb = new StyleBoxFlat
                 {
-                    BgColor = _zones[idx],
+                    BgColor = _zonesColors[idx],
 
                     BorderWidthTop = deselectedBorderWidth,
                     BorderWidthBottom = deselectedBorderWidth,
@@ -147,89 +154,6 @@ public partial class ZoneDistribution : Control
 
             _zonesHBox.AddChild(zBtn);
         }
-
-        var delBtn = new Button
-        {
-            CustomMinimumSize = BTN_SIZE,
-            ToggleMode = true
-        };
-
-        delBtn.Icon = GetThemeIcon("GuiClose", "EditorIcons");
-        delBtn.ExpandIcon = true;
-        delBtn.AddThemeConstantOverride("icon_max_width", (int)BTN_SIZE.X * 4);
-
-        var delStyle = new StyleBoxFlat
-        {
-            BgColor = Colors.Transparent,
-
-            BorderWidthTop = deselectedBorderWidth,
-            BorderWidthBottom = deselectedBorderWidth,
-            BorderWidthLeft = deselectedBorderWidth,
-            BorderWidthRight = deselectedBorderWidth,
-
-            BorderColor = deselectedColor,
-        };
-
-        delBtn.AddThemeStyleboxOverride("normal", delStyle);
-        delBtn.AddThemeStyleboxOverride("hover", delStyle);
-        delBtn.AddThemeStyleboxOverride("pressed", delStyle);
-
-        delBtn.AddThemeColorOverride("font_color", Colors.Red);
-        delBtn.AddThemeColorOverride("font_color_hover", Colors.Red);
-        delBtn.AddThemeColorOverride("font_color_pressed", Colors.Red);
-        
-        delBtn.Pressed += () => OnZoneButtonPressed(_zones.Length, delBtn);
-
-        _zonesHBox.AddChild(delBtn);
-    }
-
-    private void SpawnGridButtons()
-    {
-        
-        for (int y = 0; y < GRID_SIZE; y++)
-        {
-            Label coma = new Label
-            {
-                Text = "0." + (GRID_SIZE - y - 1).ToString(),
-                CustomMinimumSize = new Vector2(0, BTN_SIZE.Y / 2),
-            };
-            coma.AddThemeFontSizeOverride("font_size", 15);
-            _gridRef.AddChild(coma);
-
-            for (int x = 0; x < GRID_SIZE; x++)
-            {
-                var gBtn = new Button
-                {
-                    CustomMinimumSize = BTN_SIZE
-                };
-
-                gBtn.AddThemeStyleboxOverride("normal", emptySB);
-                gBtn.AddThemeStyleboxOverride("hover", emptySB);
-                gBtn.AddThemeStyleboxOverride("pressed", emptySB);
-
-                int cx = x, cy = y;
-                gBtn.Pressed += () => OnGridButtonPressed(cx, cy, gBtn);
-
-                _gridRef.AddChild(gBtn);
-            }
-        }
-        _gridRef.AddChild(new Label
-        {
-            Text = "",
-            CustomMinimumSize = new Vector2(0, BTN_SIZE.Y / 2)
-        });
-
-        for (int i = 0; i < GRID_SIZE; i++)
-        {
-
-            Label coma = new Label
-            {
-                Text = "0." + (i).ToString(),
-                CustomMinimumSize = new Vector2(0, BTN_SIZE.Y / 2),
-            };
-            coma.AddThemeFontSizeOverride("font_size", 15);
-            _gridRef.AddChild(coma);
-        }
     }
 
     private void OnZoneButtonPressed(int idx, Button btn)
@@ -237,18 +161,10 @@ public partial class ZoneDistribution : Control
         Color color;
         if (_zonesHBox.GetChildOrNull<Button>(_currentZoneIdx) is { } prev)
         {
-            if (_currentZoneIdx == _zones.Length)
-            {
-                color = Colors.Transparent;
-            }
-            else
-            {
-                color = _zones[_currentZoneIdx];
-            }
+            color = _zonesColors[_currentZoneIdx];
 
             var filledSB = new StyleBoxFlat
             {
-                
                 BgColor = color,
                 BorderWidthTop = deselectedBorderWidth,
                 BorderWidthBottom = deselectedBorderWidth,
@@ -265,14 +181,7 @@ public partial class ZoneDistribution : Control
         }
 
         
-        if (idx == _zones.Length)
-        {
-            color = Colors.Transparent;
-        }
-        else
-        {
-            color = _zones[idx];
-        }
+        color = _zonesColors[idx];
 
         var selectedSB = new StyleBoxFlat
         {
@@ -284,97 +193,36 @@ public partial class ZoneDistribution : Control
             BorderColor = selectedColor
         };
 
-
         btn.AddThemeStyleboxOverride("normal", selectedSB);
         btn.AddThemeStyleboxOverride("hover", selectedSB);
         btn.AddThemeStyleboxOverride("pressed", selectedSB);
 
         _currentZoneIdx = idx;
+        _coherenceTable.SetSelectedZoneIdx(_currentZoneIdx);
+        if (_threeDee)
+            _heightOverride.SetSelectedZoneIdx(_currentZoneIdx);
         btn.ButtonPressed = true;
-    }
-
-    private void OnGridButtonPressed(int x, int y, Button gBtn)
-    {
-        if (_currentZoneIdx == _zones.Length)
-        {
-            gBtn.AddThemeStyleboxOverride("normal", emptySB);
-            gBtn.AddThemeStyleboxOverride("hover", emptySB);
-            gBtn.AddThemeStyleboxOverride("pressed", emptySB);
-            _paintMap[y, x] = -1;
-            return;
-        }
-
-        var filledSB = new StyleBoxFlat
-        {
-            BgColor = _zones[_currentZoneIdx],
-            BorderWidthTop = 1,
-            BorderWidthBottom = 1,
-            BorderWidthLeft = 1,
-            BorderWidthRight = 1,
-            BorderColor = new Color("#DDD")
-        };
-
-        gBtn.AddThemeStyleboxOverride("normal", filledSB);
-        gBtn.AddThemeStyleboxOverride("hover", filledSB);
-        gBtn.AddThemeStyleboxOverride("pressed", filledSB);
-
-        _paintMap[y, x] = _currentZoneIdx;
-        //Debug.Print("0." + x.ToString() + " - 0." + (9 - y).ToString());
-    }
-
-    private void PaintGrid()
-    {
-        for (int y = 0; y < GRID_SIZE; y++)
-        {
-            for (int x = 1; x < GRID_SIZE + 1; x++)
-            {
-                var gBtn = _gridRef.GetChild<Button>(y * (GRID_SIZE+1) + x);
-                if (_paintMap[y, x-1] == -1)
-                {
-                    gBtn.AddThemeStyleboxOverride("normal", emptySB);
-                    gBtn.AddThemeStyleboxOverride("hover", emptySB);
-                    gBtn.AddThemeStyleboxOverride("pressed", emptySB);
-                }
-                else
-                {
-                    var filledSB = new StyleBoxFlat
-                    {
-                        BgColor = _zones[_paintMap[y, x-1]],
-                        BorderWidthTop = 1,
-                        BorderWidthBottom = 1,
-                        BorderWidthLeft = 1,
-                        BorderWidthRight = 1,
-                        BorderColor = new Color("#DDD")
-                    };
-                    gBtn.AddThemeStyleboxOverride("normal", filledSB);
-                    gBtn.AddThemeStyleboxOverride("hover", filledSB);
-                    gBtn.AddThemeStyleboxOverride("pressed", filledSB);
-                }
-            }
-        }
     }
 
     private void OnSavePressed()
     {
-        _dockInterfaceManager.SaveCoherenceTable(_paintMap);
+        _dockInterfaceManager.SaveZoneDistribution();
     }
 
-    public int[,] GetCoherenceTable()
+    public void Clear()
     {
-        return _paintMap;
+        _coherenceTable.Clear();
+        if (_threeDee)
+            _heightOverride.Clear();
     }
 
-    internal void SetCoherenceTable(int[,] table)
+    internal int[,] GetCoherenceTable()
     {
-        _paintMap = table;
-        PaintGrid();
+        return _coherenceTable.GetCoherenceTable();
     }
 
-    public void ClearCoherenceTable()
+    internal int[] GetHeightOverride()
     {
-        for (int y = 0; y < GRID_SIZE; y++)
-            for (int x = 0; x < GRID_SIZE; x++)
-                _paintMap[y, x] = -1;
-        PaintGrid();
+        return _heightOverride.GetHeightOverride();
     }
 }

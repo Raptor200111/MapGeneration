@@ -10,45 +10,65 @@ using TFG_Godot.Properties;
 
 [Tool]
 public partial class DockInterfaceManager : Control
-{   
-    public enum Dimensions
-    {
-        D2, D3
-    }
+{
+    bool threeDee = false;
+    [Export] PackedScene zoneContentPrefab;
+    [Export] PackedScene newZoneContentPrefab;
+    //[Export] PackedScene zoneCoherencePrefab;
 
-    EditorInterface editorInterface;
-    Dimensions dimension;
-    PackedScene zoneContentPrefab;
-    PackedScene newZoneContentPrefab;
-    PackedScene zoneCoherencePrefab;
+    [Export] NodePath dimesionSwitchPath;
+    [Export] NodePath zoneDistributionPath;
+    [Export] NodePath blockSizingLineEditPath;
+    [Export] NodePath wideLineEditPath;
+    [Export] NodePath deepLineEditPath;
+    [Export] NodePath tileTypeOptionButtonPath;
+    [Export] NodePath seedLineEditPath;
+    [Export] NodePath noZoneLabelPath;
+    [Export] NodePath zoneListPath;
+    [Export] NodePath zoneScrollContainerPath;
+    [Export] NodePath marginContainerPath;
+    [Export] NodePath coherenceTableButtonPath;
+
+    CheckButton _dimesionSwitch;
+    ZoneDistribution _zoneDistribution;
+    LineEdit _blockSizingLineEdit;
+    LineEdit _wideLineEdit;
+    LineEdit _deepLineEdit;
+    OptionButton _tileTypeOptionButton;
+    LineEdit _seedLineEdit;
+    Label _noZoneLabel;
+    Control _zoneList;
+    ScrollContainer _zoneScrollContainer;
+    Control _marginContainer;
+    Button _coherenceTableButton;
 
     bool newZoneActive = false;
     bool editedZoneActive = false;
     string loadedFilePath = "";
-
-
-    public static DockInterfaceManager Singleton { get; private set; }
     public GenerationManager GenerationManager { get; private set; }
     public DockInterfaceManager()
     {
-        editorInterface = EditorInterface.Singleton;
-        dimension = Dimensions.D2;
-        zoneContentPrefab = ResourceLoader.Load<PackedScene>("res://addons/MapGeneratorPlugin/Prefabs/zone_content.tscn");
-        newZoneContentPrefab = ResourceLoader.Load<PackedScene>("res://addons/MapGeneratorPlugin/Prefabs/new_zone_content.tscn");
         GenerationManager = new GenerationManager();
     }
 
     //GODOT OVERRIDE FUNCTIONS:
     public override void _Ready()
     {
-        Singleton = this;
-        //GenerateSeed();
+        _dimesionSwitch = GetNode<CheckButton>(dimesionSwitchPath);
+        _zoneDistribution = GetNode<ZoneDistribution>(zoneDistributionPath);
+        _blockSizingLineEdit = GetNode<LineEdit>(blockSizingLineEditPath);
+        _wideLineEdit = GetNode<LineEdit>(wideLineEditPath);
+        _deepLineEdit = GetNode<LineEdit>(deepLineEditPath);
+        _tileTypeOptionButton = GetNode<OptionButton>(tileTypeOptionButtonPath);
+        _seedLineEdit = GetNode<LineEdit>(seedLineEditPath);
+        _noZoneLabel = GetNode<Label>(noZoneLabelPath);
+        _zoneList = GetNode<Control>(zoneListPath);
+        _zoneScrollContainer = GetNode<ScrollContainer>(zoneScrollContainerPath);
+        _marginContainer = GetNode<Control>(marginContainerPath);
+        _coherenceTableButton = GetNode<Button>(coherenceTableButtonPath);
+        
+        _seedLineEdit.Text = "12345678"; //GenerateSeed();
         LoadCurrentConfig();
-    }
-    public override void _EnterTree()
-    {
-        LoadZones();
-        GetNode<LineEdit>("%SeedLineEdit").Text = "12345678"; //GenerateSeed();
     }
 
     //CONFIGURATION FUNCTIONS:
@@ -66,12 +86,13 @@ public partial class DockInterfaceManager : Control
     }
     public void ResetCurrentConfig()
     {
-        dimension = 0;
-        GetNode<LineEdit>("%BlockSizingLineEdit").Text = "1";
-        GetNode<LineEdit>("%wideLineEdit").Text = "";
-        GetNode<LineEdit>("%deepLineEdit").Text = "";
-        GetNode<OptionButton>("%TileTypeOptionButton").Selected = 0;
-        GetNode<LineEdit>("%SeedLineEdit").Text = "12345678";
+        threeDee = false;
+        _dimesionSwitch._Toggled(false);
+        _blockSizingLineEdit.Text = "1";
+        _wideLineEdit.Text = "";
+        _deepLineEdit.Text = "";
+        _tileTypeOptionButton.Selected = 0;
+        _seedLineEdit.Text = "12345678";
 
         GenerationManager = new GenerationManager();
         for (int i = 0; i < GenerationManager.GetZoneCount(); i++)
@@ -83,7 +104,12 @@ public partial class DockInterfaceManager : Control
             for (int x = 0; x < 10; x++)
                 table[y, x] = -1;
         }
-        GetNode<ZoneDistribution>("%ZoneContainer/ZoneDistribution").SetCoherenceTable(table);
+
+        int[] heightOverride = new int[10];
+        for (int i = 0; i < heightOverride.Length; i++)
+            heightOverride[i] = -1;
+
+        _zoneDistribution.Initialize(this, table, threeDee, heightOverride);
 
         LoadZones();
 
@@ -101,12 +127,12 @@ public partial class DockInterfaceManager : Control
     {
         var data = new Godot.Collections.Dictionary<string, Variant>
         {
-            ["Dimension"] = (int)dimension,
-            ["BlockSize"] = GetNode<LineEdit>("%BlockSizingLineEdit").Text,
-            ["ChunkWide"] = GetNode<LineEdit>("%wideLineEdit").Text,
-            ["ChunkDeep"] = GetNode<LineEdit>("%deepLineEdit").Text,
-            ["TileType"] = GetNode<OptionButton>("%TileTypeOptionButton").Selected,
-            ["Seed"] = GetNode<LineEdit>("%SeedLineEdit").Text
+            ["3D"] = threeDee,
+            ["BlockSize"] = _blockSizingLineEdit.Text,
+            ["ChunkWide"] = _wideLineEdit.Text,
+            ["ChunkDeep"] = _deepLineEdit.Text,
+            ["TileType"] = _tileTypeOptionButton.Selected,
+            ["Seed"] = _seedLineEdit.Text,
         };
 
         var zonesArr = new Godot.Collections.Array<Godot.Collections.Dictionary<string, Variant>>();
@@ -114,16 +140,17 @@ public partial class DockInterfaceManager : Control
             zonesArr.Add(z.ToJson());
         data["Zones"] = zonesArr;
 
-        int[,] table = GetNode<ZoneDistribution>("%ZoneContainer/ZoneDistribution").GetCoherenceTable();
+        int[,] coherenceTable = _zoneDistribution.GetCoherenceTable();
         var outer = new Godot.Collections.Array<Godot.Collections.Array<int>>();
-        for (int y = 0; y < table.GetLength(0); y++)
+        for (int y = 0; y < coherenceTable.GetLength(0); y++)
         {
             var row = new Godot.Collections.Array<int>();
-            for (int x = 0; x < table.GetLength(1); x++)
-                row.Add(table[y, x]);
+            for (int x = 0; x < coherenceTable.GetLength(1); x++)
+                row.Add(coherenceTable[y, x]);
             outer.Add(row);
         }
         data["CoherenceTable"] = outer;
+        data["HeightOverride"] = _zoneDistribution.GetHeightOverride();
 
         return data;
     }
@@ -132,12 +159,14 @@ public partial class DockInterfaceManager : Control
         if (v.VariantType != Variant.Type.Dictionary) return;
         var data = (Godot.Collections.Dictionary<string, Variant>)v;
 
-        dimension = (Dimensions)(int)data["Dimension"];
-        GetNode<LineEdit>("%BlockSizingLineEdit").Text = data["BlockSize"].AsString();
-        GetNode<LineEdit>("%wideLineEdit").Text = data["ChunkWide"].AsString();
-        GetNode<LineEdit>("%deepLineEdit").Text = data["ChunkDeep"].AsString();
-        GetNode<OptionButton>("%TileTypeOptionButton").Selected = (int)data["TileType"];
-        GetNode<LineEdit>("%SeedLineEdit").Text = data["Seed"].AsString();
+        threeDee = (bool)data["3D"];
+        //_dimesionSwitch._Toggled(threeDee);
+        _dimesionSwitch.ButtonPressed = threeDee;
+        _blockSizingLineEdit.Text = data["BlockSize"].AsString();
+        _wideLineEdit.Text = data["ChunkWide"].AsString();
+        _deepLineEdit.Text = data["ChunkDeep"].AsString();
+        _tileTypeOptionButton.Selected = (int)data["TileType"];
+        _seedLineEdit.Text = data["Seed"].AsString();
 
         GenerationManager = new GenerationManager();
         var zonesArray = (Godot.Collections.Array)data["Zones"];
@@ -153,7 +182,10 @@ public partial class DockInterfaceManager : Control
             for (int x = 0; x < w; x++)
                 table[y, x] = row[x].AsInt32();
         }
-        GetNode<ZoneDistribution>("%ZoneContainer/ZoneDistribution").SetCoherenceTable(table);
+
+        int[] heightTable = (int[]) data["HeightOverride"];
+
+        _zoneDistribution.Initialize(this, table, threeDee, heightTable);
 
         LoadZones();
     }
@@ -167,12 +199,11 @@ public partial class DockInterfaceManager : Control
         //generationManager.blockScale = 
         SaveCurrentConfig();
 
-        string blockSize = GetNode<LineEdit>("%BlockSizingLineEdit").Text;
+        string blockSize = _blockSizingLineEdit.Text;
         string blockSizeName = "\"Block Size Size\"";
         if (blockSize == "") 
         {
-            Debug.Print(blockSizeName + " Empty");
-            return;
+            blockSize = "1"; // Default value
         }
         if (! blockSize.IsValidFloat())
         {
@@ -185,16 +216,19 @@ public partial class DockInterfaceManager : Control
             return;
         }
 
-        string wide = GetNode<LineEdit>("%wideLineEdit").Text;
-        string deep = GetNode<LineEdit>("%deepLineEdit").Text;
+        string wide = _wideLineEdit.Text;
+        string deep = _deepLineEdit.Text;
 
         string wideName = "\"Chunk Wide\"";
         string deepName = "\"Deep Wide\"";
 
-        if (wide == "" || deep == "")
+        if (wide == "")
         {
-            Debug.Print(deepName + " or " + wideName + " Empty");
-            return;
+            wide = "100";
+        }
+        if (deep == "")
+        {
+            deep = "100";
         }
         if (!wide.IsValidInt() || !deep.IsValidInt())
         {
@@ -213,9 +247,9 @@ public partial class DockInterfaceManager : Control
             return;
         }
 
-        int tileType = GetNode<OptionButton>("%TileTypeOptionButton").Selected;
+        int tileType = _tileTypeOptionButton.Selected;
         
-        string seedText = GetNode<LineEdit>("%SeedLineEdit").Text;
+        string seedText = _seedLineEdit.Text;
         if (seedText == "")
         {
             Debug.Print("Seed is Empty");
@@ -226,22 +260,21 @@ public partial class DockInterfaceManager : Control
             Debug.Print("Seed is Not valid number");
             return;
         }
-        
-        GenerationManager.Start(blockSize.ToFloat(), new Vector2I(wide.ToInt(), deep.ToInt()), (Tile.TileType)tileType, seed, GetNode<ZoneDistribution>("%ZoneContainer/ZoneDistribution").GetCoherenceTable());
+
+        GenerationManager.Start(blockSize.ToFloat(), new Vector2I(wide.ToInt(), deep.ToInt()), (Tile.TileType)tileType, seed, _zoneDistribution.GetCoherenceTable(), threeDee, _zoneDistribution.GetHeightOverride());
     }
 
     public void DimensionButtonToggle(bool toggled)
     {
-        dimension = (Dimensions)Convert.ToInt32(toggled);
-        Debug.Print(dimension.ToString());
+        threeDee = (toggled);
         SaveCurrentConfig();
     }
 
     public void RefreshButtonPressed()
     {
         SaveCurrentConfig();
-        editorInterface.SetPluginEnabled("MapGeneratorPlugin", false);
-        editorInterface.SetPluginEnabled("MapGeneratorPlugin", true);
+        EditorInterface.Singleton.SetPluginEnabled("MapGeneratorPlugin", false);
+        EditorInterface.Singleton.SetPluginEnabled("MapGeneratorPlugin", true);
     }
 
     public void PlusZoneButtonPressed()
@@ -270,7 +303,7 @@ public partial class DockInterfaceManager : Control
         }
     }
 
-    public void SaveZone(string name, Color color, Resources resources, int index = -1)
+    public void SaveZone(string name, Color color, ResourcePathList resources, int index = -1)
     {
         if (index == -1)
         {
@@ -289,6 +322,7 @@ public partial class DockInterfaceManager : Control
 
     public void DeleteZone(int index = -1)
     {
+        //remove the zone from the coherence table, and restar 1 en todos los demas.
         if (newZoneActive)
         {
             newZoneActive = false;
@@ -314,28 +348,20 @@ public partial class DockInterfaceManager : Control
         }
         var zones = GenerationManager.GetZones();
 
-        Label noZonesLabel = GetNode<Label>("%ZoneContainer/MarginContainer/EmptyLabel");
-        Control zoneList = GetNode<Control>("%ZoneContainer/MarginContainer/ScrollContainer/ZoneList");
-
         if (zones.Length > 0 || newZoneActive)
         {
-            noZonesLabel.Visible = false;
-            GetNode<ScrollContainer>("%ZoneContainer/MarginContainer/ScrollContainer").CustomMinimumSize = new Vector2(0, zoneContentPrefab.Instantiate<Control>().Size.Y);
+            _zoneScrollContainer.CustomMinimumSize = new Vector2(0, zoneContentPrefab.Instantiate<Control>().Size.Y);
 
-            if (zoneList != null)
+            if (_zoneList != null)
             {
-                foreach (Node child in zoneList.GetChildren())
+                foreach (Node child in _zoneList.GetChildren())
                 {
-                    zoneList.RemoveChild(child);
+                    _zoneList.RemoveChild(child);
                     child.QueueFree();
                 }
 
-                zoneList.GetParent<Control>().CustomMinimumSize = new Vector2(0, 200);
-                Label emptyLabel = GetNode<Label>("%ZoneContainer/MarginContainer/EmptyLabel");
-                if (emptyLabel != null)
-                {
-                    emptyLabel.Visible = false;
-                }
+                _zoneList.GetParent<Control>().CustomMinimumSize = new Vector2(0, 200);
+                _noZoneLabel.Visible = false;
 
                 //zoneList = GetNode<Control>("%ZoneContainer/MarginContainer/ScrollContainer/ZoneList");
 
@@ -343,8 +369,8 @@ public partial class DockInterfaceManager : Control
                 {
                     var editZone = newZoneContentPrefab.Instantiate();
                     editZone.GetNode<NewZoneContent>(".").Initialize(this);
-                    zoneList.AddChild(editZone);
-                    editZone.Owner = zoneList.Owner;
+                    _zoneList.AddChild(editZone);
+                    editZone.Owner = _zoneList.Owner;
                 }
 
                 for (int i = 0; i < zones.Length; i++)
@@ -353,8 +379,8 @@ public partial class DockInterfaceManager : Control
                     {
                         var editZone = newZoneContentPrefab.Instantiate();
                         editZone.GetNode<NewZoneContent>(".").Initialize(this);
-                        zoneList.AddChild(editZone);
-                        editZone.Owner = zoneList.Owner;
+                        _zoneList.AddChild(editZone);
+                        editZone.Owner = _zoneList.Owner;
 
                         editZone.GetNode<NewZoneContent>(".").Edit(zones[i].GetZoneName(), zones[i].GetColor(), zones[i].GetResources());
                     }
@@ -362,8 +388,8 @@ public partial class DockInterfaceManager : Control
                     {
                         var zoneContent = zoneContentPrefab.Instantiate();
                         zoneContent.GetNode<ZoneContent>(".").Initialize(this);
-                        zoneList.AddChild(zoneContent);
-                        zoneContent.Owner = zoneList.Owner;
+                        _zoneList.AddChild(zoneContent);
+                        zoneContent.Owner = _zoneList.Owner;
 
                         zoneContent.GetNode<ZoneContent>(".").SetElements(zones[i].GetZoneName(), zones[i].GetColor());
                     }
@@ -372,51 +398,40 @@ public partial class DockInterfaceManager : Control
         }
         else
         {
-            if (zoneList != null)
+            if (_zoneList != null)
             {
-                zoneList.GetParent<Control>().CustomMinimumSize = new Vector2(0, 0);
-                foreach (Node child in zoneList.GetChildren())
+                _zoneList.GetParent<Control>().CustomMinimumSize = new Vector2(0, 0);
+                foreach (Node child in _zoneList.GetChildren())
                 {
-                    zoneList.RemoveChild(child);
+                    _zoneList.RemoveChild(child);
                     child.QueueFree();
                 }
             }
-            noZonesLabel.Visible = true;
+            _noZoneLabel.Visible = true;
         }
         //Debug.Print(GetNode<Control>("%ZoneList").GetChildCount().ToString());
     }
 
     public void GenerateSeed()
     {
-        GetNode<LineEdit>("%SeedLineEdit").Text = GenerationManager.GenerateSeed().ToString();
+        _seedLineEdit.Text = GenerationManager.GenerateSeed().ToString();
         SaveCurrentConfig();
     }
 
     public void CoherenceTableButtonPressed()
     {
-        GetNode<Control>("%ZoneContainer/MarginContainer").Visible = false;
-        GetNode<Control>("%ZoneContainer/CoherenceTableButton").Visible = false;
+        _marginContainer.Visible = false;
+        _coherenceTableButton.Visible = false;
+        _zoneDistribution.Visible = true;
 
-        var zoneDistribution = GetNode<ZoneDistribution>("%ZoneContainer/ZoneDistribution");
-        zoneDistribution.Visible = true;
-        zoneDistribution.Initialize(this);
+        _zoneDistribution.Show(threeDee);
     }
 
-    public void SaveCoherenceTable(int[,] paintMap)
+    public void SaveZoneDistribution()
     {
-        //GD.Print("=== SAVE GRID ===");
-        //for (int y = 0; y < 10; y++)
-        //{
-        //    string row = "";
-        //    for (int x = 0; x < 10; x++)
-        //        row += $"{paintMap[y, x],2} ";
-        //    GD.Print(row);
-        //}
-        //GD.Print("=================");
-
-        GetNode<Control>("%ZoneContainer/MarginContainer").Visible = true;
-        GetNode<Control>("%ZoneContainer/CoherenceTableButton").Visible = true;
-        GetNode<ZoneDistribution>("%ZoneContainer/ZoneDistribution").Visible = false;
+        _marginContainer.Visible = true;
+        _coherenceTableButton.Visible = true;
+        _zoneDistribution.Visible = false;
         SaveCurrentConfig();
     }
 }

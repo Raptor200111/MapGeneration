@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://kklmuofjhoqp"]
+
+[ext_resource type="Script" path="res://addons/MapGeneratorPlugin/ColorRectPrefab.cs" id="1_kngcx"]
+
+[node name="ColorRect" type="ColorRect"]
+custom_minimum_size = Vector2(50, 50)
+script = ExtResource("1_kngcx")
+
+[connection signal="mouse_entered" from="." to="." method="OnEntered"]
+[connection signal="mouse_exited" from="." to="." method="OnExited"]

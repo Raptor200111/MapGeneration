@@ -11,7 +11,7 @@ public partial class ZoneContent : PanelContainer
     private DockInterfaceManager dockInterfaceManager;
     public ZoneContent()
     {
-        dockInterfaceManager = DockInterfaceManager.Singleton;
+        dockInterfaceManager = MapGeneratorPlugin.Singleton;
     }
 
     public void Initialize(DockInterfaceManager d)

@@ -1,0 +1,410 @@
+[gd_scene load_steps=3 format=3 uid="uid://n4mh8kn0sls3"]
+
+[ext_resource type="Script" path="res://addons/MapGeneratorPlugin/CoherenceTable.cs" id="1_x0pw4"]
+[ext_resource type="PackedScene" uid="uid://kklmuofjhoqp" path="res://addons/MapGeneratorPlugin/Prefabs/color_rect_prefab.tscn" id="2_povsy"]
+
+[node name="CoherenceTable" type="GridContainer"]
+theme_override_constants/h_separation = 2
+theme_override_constants/v_separation = 2
+columns = 10
+script = ExtResource("1_x0pw4")
+
+[node name="ColorRect" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect2" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect3" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect4" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect5" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect6" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect7" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect8" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect9" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect10" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect11" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect12" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect13" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect14" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect15" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect16" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect17" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect18" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect19" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect20" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect21" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect22" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect23" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect24" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect25" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect26" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect27" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect28" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect29" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect30" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect31" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect32" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect33" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect34" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect35" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect36" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect37" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect38" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect39" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect40" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect41" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect42" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect43" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect44" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect45" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect46" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect47" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect48" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect49" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect50" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect51" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect52" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect53" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect54" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect55" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect56" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect57" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect58" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect59" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect60" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect61" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect62" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect63" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect64" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect65" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect66" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect67" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect68" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect69" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect70" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect71" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect72" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect73" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect74" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect75" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect76" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect77" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect78" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect79" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect80" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect81" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect82" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect83" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect84" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect85" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect86" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect87" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect88" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect89" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect90" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect91" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect92" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect93" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect94" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect95" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect96" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect97" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect98" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect99" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+
+[node name="ColorRect100" parent="." instance=ExtResource("2_povsy")]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
