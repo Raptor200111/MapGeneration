@@ -75,10 +75,24 @@ public partial class ColorRectPrefab : ColorRect
         this.Color = Colors.White;
         idx = -1;
         cleared = true;
+
+        var sb = new StyleBoxFlat
+        {
+            BorderWidthTop = 1,
+            BorderWidthBottom = 1,
+            BorderWidthLeft = 1,
+            BorderWidthRight = 1,
+
+            BorderColor = Colors.Black
+        };
+        this.AddThemeStyleboxOverride("", sb);
     }
 
     public void SetData(Color color, int idx)
     {
+        var sb = new StyleBoxFlat();
+        this.AddThemeStyleboxOverride("", sb);
+
         this.Color = color;
         this.idx = idx;
         //this.AddThemeStyleboxOverride("", new StyleBoxFlat());

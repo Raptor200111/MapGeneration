@@ -4,21 +4,13 @@ using System;
 [Tool]
 public partial class ResourcePicker : PanelContainer
 {
-    [Export] private NodePath AddonResourcePickerPath;
-    [Export] private NodePath SpinBoxPath;
-
     private EditorResourcePicker _editorResourcePicker;
     private SpinBox _spinBox;
 
     public override void _Ready()
     {
-        _editorResourcePicker = GetNode<EditorResourcePicker>(AddonResourcePickerPath);
-        _spinBox = GetNode<SpinBox>(SpinBoxPath);
-    }
-
-    public void Delete()
-    {
-        this.QueueFree();
+        _editorResourcePicker = GetNode<EditorResourcePicker>("VBoxContainer/AddonResourcePicker");
+        _spinBox = GetNode<SpinBox>("VBoxContainer/HBoxContainer/SpinBox");
     }
 
     public string GetResourcePath()
@@ -39,5 +31,10 @@ public partial class ResourcePicker : PanelContainer
     public void SetProbability(int probability)
     {
         _spinBox.Value = probability;
+    }
+
+    public void Delete()
+    {
+        QueueFree();
     }
 }

@@ -1,37 +1,28 @@
 using Godot;
 using System;
 
-public abstract partial class Tile : Node
+public abstract partial class Tile
 {
 
-	public enum TileType
-	{
-		Square = 0,
-		Triangle = 1,
-		Hexagon = 2,
-		Isometric = 3
-	}
-	public abstract Transform3D[,] GetMatrix(float blockScale, Vector2I chunkSize, Vector3 origin);
+	
+	public abstract Transform3D[,] GetMatrix(Vector2I chunkSize);
 
 	public abstract ArrayMesh GetMesh();
 
     public static Tile GetTileType(TileType tileType)
 	{
-		if (tileType == TileType.Square)
-		{
-			return new SquareTile();
-        }
-        else if (tileType == TileType.Triangle)
+        switch (tileType)
         {
-            return new TriangleTile();
-        }
-        else if (tileType == TileType.Hexagon)
-        {
-            return new HexTile();
-        }
-        else //if (tileType == Tiles.Isometric)
-        {
-            return new IsoTile();
+            case TileType.Square:
+                return new SquareTile();
+            case TileType.Triangle:
+                return new TriangleTile();
+            case TileType.Hexagon:
+                return new HexTile();
+            case TileType.Isometric:
+                return new IsoTile();
+            default:
+                throw new ArgumentException("Unknown tile type: " + tileType);
         }
 	}
 }

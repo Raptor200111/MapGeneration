@@ -11,7 +11,6 @@ shadow_size = 0
 shadow_offset = Vector2(0, 0)
 
 [node name="ZoneDistribution" type="PanelContainer"]
-custom_minimum_size = Vector2(0, 512)
 anchors_preset = -1
 anchor_right = 0.363
 anchor_bottom = 0.79
@@ -20,10 +19,6 @@ offset_bottom = 0.0799866
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_n04ll")
-zonesHBoxPath = NodePath("VBox_UI/HBox_Zones")
-coherenceTablePath = NodePath("VBox_UI/HBoxContainer/CoherenceTable")
-heightOverridePath = NodePath("VBox_UI/HBoxContainer/HeightOverride")
-heightOverrideNumbersPath = NodePath("VBox_UI/HBoxContainer/HeightNumbers")
 
 [node name="VBox_UI" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -322,5 +317,5 @@ layout_mode = 2
 layout_mode = 2
 text = "Save"
 
-[connection signal="pressed" from="VBox_UI/ClearButton" to="." method="ClearCoherenceTable"]
+[connection signal="pressed" from="VBox_UI/ClearButton" to="." method="Clear"]
 [connection signal="pressed" from="VBox_UI/SaveButton" to="." method="OnSavePressed"]

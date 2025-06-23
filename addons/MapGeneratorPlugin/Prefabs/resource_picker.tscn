@@ -12,15 +12,13 @@ offset_bottom = -0.112
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ohmbk")
-AddonResourcePickerPath = NodePath("VBoxContainer/AddonResourcePicker")
-SpinBoxPath = NodePath("VBoxContainer/HBoxContainer/SpinBox")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
 
 [node name="AddonResourcePicker" type="EditorResourcePicker" parent="VBoxContainer"]
 layout_mode = 2
-base_type = "PackedScene"
+base_type = "PackedScene,Mesh"
 script = ExtResource("1_62hj8")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]

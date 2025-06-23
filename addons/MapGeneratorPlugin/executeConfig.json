@@ -1,0 +1,197 @@
+{
+	"3D": false,
+	"BlockSize": 1,
+	"ChunkDeep": 300,
+	"ChunkWide": 300,
+	"CoherenceTable": [
+		[
+			1,
+			1,
+			1,
+			1,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			1,
+			1,
+			1,
+			1,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			1,
+			1,
+			1,
+			1,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			1,
+			1,
+			1,
+			1,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			0,
+			-1,
+			0,
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			0,
+			0,
+			2,
+			2,
+			2,
+			2,
+			2
+		],
+		[
+			0,
+			0,
+			0,
+			0,
+			0,
+			2,
+			3,
+			2,
+			3,
+			2
+		],
+		[
+			0,
+			0,
+			0,
+			0,
+			0,
+			2,
+			2,
+			3,
+			2,
+			2
+		],
+		[
+			0,
+			0,
+			0,
+			0,
+			0,
+			2,
+			3,
+			2,
+			3,
+			2
+		],
+		[
+			0,
+			0,
+			0,
+			0,
+			0,
+			2,
+			2,
+			2,
+			2,
+			2
+		]
+	],
+	"DinamicWorld": true,
+	"Freq2D": 0.0299999993294477,
+	"Freq3D": 0.0599999986588955,
+	"HeightOverride": [
+		-1,
+		-1,
+		-1,
+		-1,
+		-1,
+		-1,
+		-1,
+		-1,
+		-1,
+		-1
+	],
+	"Seed": 1175711065,
+	"TileType": 2,
+	"Zones": [
+		{
+			"Color": 852308735,
+			"Name": "pradera",
+			"Resources": [
+				[
+					"res://GLB_Objects/hex/hex_verde.glb",
+					100
+				]
+			]
+		},
+		{
+			"Color": 4289003775,
+			"Name": "desert",
+			"Resources": [
+				[
+					"res://GLB_Objects/hex/hex_naranja.glb",
+					100
+				]
+			]
+		},
+		{
+			"Color": 2155905279,
+			"Name": "pieda1",
+			"Resources": [
+				[
+					"res://GLB_Objects/hex/hex_gris.glb",
+					100
+				]
+			]
+		},
+		{
+			"Color": 4294967295,
+			"Name": "pieda2",
+			"Resources": [
+				[
+					"res://GLB_Objects/hex/hex_blanco.glb",
+					100
+				]
+			]
+		},
+		{
+			"Color": 1980029695,
+			"Name": "asdf",
+			"Resources": [
+				[
+					"res://GLB_Objects/hex/hex_azul.glb",
+					100
+				]
+			]
+		}
+	]
+}

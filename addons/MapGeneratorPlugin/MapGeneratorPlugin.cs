@@ -22,19 +22,21 @@ public partial class MapGeneratorPlugin : EditorPlugin
     public override void _EnterTree()
 	{
         PackedScene toolbar = ResourceLoader.Load<PackedScene>("res://addons/MapGeneratorPlugin/DockInterface.tscn");
-        _singleton = (DockInterfaceManager)toolbar.Instantiate();
+
+        var instance = toolbar.Instantiate();
+        Singleton = instance.GetNode<DockInterfaceManager>(".");
         
-        AddControlToDock(EditorPlugin.DockSlot.LeftUl, _singleton);
+        AddControlToDock(EditorPlugin.DockSlot.LeftUl, Singleton);
     }
     
 	public override void _ExitTree()
 	{
-        RemoveControlFromDocks(_singleton);
+        RemoveControlFromDocks(Singleton);
 
         //control.Free();
         //toolbar.Free();
         //control.Free();
-        _singleton.QueueFree();
+        Singleton.QueueFree();
     }
 }
 #endif

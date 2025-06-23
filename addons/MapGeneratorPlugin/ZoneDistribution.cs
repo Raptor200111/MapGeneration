@@ -1,6 +1,8 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 [Tool]
 public partial class ZoneDistribution : Control
@@ -13,12 +15,7 @@ public partial class ZoneDistribution : Control
     private readonly int selectedBorderWidth = 4;
     private readonly int deselectedBorderWidth = 2;
 
-    private Color[] _zonesColors;
-
-    private int _currentZoneIdx = 0;
-    private bool _threeDee = false;
-
-    private StyleBoxFlat emptySB = new StyleBoxFlat
+    private readonly StyleBoxFlat emptySB = new StyleBoxFlat
     {
         DrawCenter = false,
         BorderWidthTop = 1,
@@ -28,11 +25,10 @@ public partial class ZoneDistribution : Control
         BorderColor = new Color("#666")
     };
 
-    [Export] NodePath zonesHBoxPath;
-    [Export] NodePath coherenceTablePath;
-    [Export] NodePath heightOverridePath;
-    [Export] NodePath heightOverrideNumbersPath;
+    private List<Color> _zonesColors;
 
+    private int _currentZoneIdx = 0;
+    private bool _threeDee = false;
 
     private HBoxContainer _zonesHBox;
     private CoherenceTable _coherenceTable;
@@ -41,10 +37,10 @@ public partial class ZoneDistribution : Control
 
     public override void _Ready()
     {
-        _zonesHBox = GetNode<HBoxContainer>(zonesHBoxPath);
-        _coherenceTable = GetNode<CoherenceTable>(coherenceTablePath);
-        _heightOverride = GetNode<HeightOverride>(heightOverridePath);
-        _heightOverrideNumbers = GetNode<Control>(heightOverrideNumbersPath);
+        _zonesHBox = GetNode<HBoxContainer>("VBox_UI/HBox_Zones");
+        _coherenceTable = GetNode<CoherenceTable>("VBox_UI/HBoxContainer/CoherenceTable");
+        _heightOverride = GetNode<HeightOverride>("VBox_UI/HBoxContainer/HeightOverride");
+        _heightOverrideNumbers = GetNode<Control>("VBox_UI/HBoxContainer/HeightNumbers");
 
         _zonesColors = GetZonesColors();
         SpawnZoneButtons();
@@ -56,39 +52,38 @@ public partial class ZoneDistribution : Control
         //this.CustomMinimumSize = new Vector2(0, minimumSize);
     }
 
-    public void Initialize(DockInterfaceManager dockInterfaceManager, int[,] table, bool threeDee, int[] heightOverride)
+    public void Initialize(DockInterfaceManager dockInterfaceManager, int[][] table, int[] heightOverride)
     {
         _dockInterfaceManager = MapGeneratorPlugin.Singleton;
         _zonesColors = GetZonesColors();
         SpawnZoneButtons();
-        _coherenceTable.SetCoherenceTable(table, _zonesColors);
-        _threeDee = threeDee;
-        if (_threeDee == true)
-        { 
-            _heightOverride.SetHeightOverride(heightOverride, _zonesColors);
-            _heightOverride.Visible = _heightOverrideNumbers.Visible = true;
-        }
-        else
-        {
-            _heightOverride.Visible = _heightOverrideNumbers.Visible = false;
-        }
+        _coherenceTable.SetCoherenceTable(table);
+        _heightOverride.SetHeightOverride(heightOverride);
     }
 
-    public void Show(bool threeDee)
+    public void AddZone()
     {
-        _threeDee = threeDee;
-        _heightOverride.Visible = _heightOverrideNumbers.Visible = _threeDee;
+        _zonesColors = GetZonesColors();
+        SpawnZoneButtons();
     }
 
-    public Color[] GetZonesColors()
+    public void DeleteZone(int index)
+    {
+        _zonesColors.RemoveAt(index);
+        _coherenceTable.RemoveZone(index);
+        _heightOverride.RemoveZone(index);
+        SpawnZoneButtons();
+    }
+
+    public List<Color> GetZonesColors()
     {
         if (_dockInterfaceManager == null)
-            return new Color[0];
+            return new List<Color>();
         var zones = _dockInterfaceManager.GenerationManager.GetZones();
 
-        Color[] colors = new Color[zones.Length];
+        var colors = new List<Color>();// zones.Length];
         for (int i = 0; i < zones.Length; i++)
-            colors[i] = zones[i].GetColor();
+            colors.Add(zones[i].GetColor());
 
         return colors;
     }
@@ -105,7 +100,7 @@ public partial class ZoneDistribution : Control
             }
         }
 
-        for (int idx = 0; idx < _zonesColors.Length; idx++)
+        for (int idx = 0; idx < _zonesColors.Count; idx++)
         {
             var zBtn = new Button
             {
@@ -199,30 +194,18 @@ public partial class ZoneDistribution : Control
 
         _currentZoneIdx = idx;
         _coherenceTable.SetSelectedZoneIdx(_currentZoneIdx);
-        if (_threeDee)
-            _heightOverride.SetSelectedZoneIdx(_currentZoneIdx);
+        _heightOverride.SetSelectedZoneIdx(_currentZoneIdx);
         btn.ButtonPressed = true;
     }
 
     private void OnSavePressed()
     {
-        _dockInterfaceManager.SaveZoneDistribution();
+        _dockInterfaceManager.SaveZoneDistribution(_coherenceTable.GetCoherenceTable(), _heightOverride.GetHeightOverride());
     }
 
     public void Clear()
     {
         _coherenceTable.Clear();
-        if (_threeDee)
-            _heightOverride.Clear();
-    }
-
-    internal int[,] GetCoherenceTable()
-    {
-        return _coherenceTable.GetCoherenceTable();
-    }
-
-    internal int[] GetHeightOverride()
-    {
-        return _heightOverride.GetHeightOverride();
+        _heightOverride.Clear();
     }
 }

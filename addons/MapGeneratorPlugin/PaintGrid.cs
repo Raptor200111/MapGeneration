@@ -1,24 +1,15 @@
 ﻿using Godot;
 using System;
+using System.Collections.Generic;
 
 [Tool]
-public partial class PaintGrid : GridContainer
+public abstract partial class  PaintGrid : GridContainer
 {
     int selectedZoneIdx = 0;
-    protected Color[] colors;
-
-    public void SetColors(Color[] colors)
-    {
-        this.colors = colors;
-    }
 
     public Color GetColorFromSelectedZone()
     {
-        if (colors == null)
-        {
-            colors = GetNode<ZoneDistribution>("../../..").GetZonesColors();
-        }
-        return colors[selectedZoneIdx];
+        return GetNode<ZoneDistribution>("../../..").GetZonesColors()[selectedZoneIdx];
     }
 
     public int GetSelectedZoneIdx()
@@ -42,6 +33,22 @@ public partial class PaintGrid : GridContainer
         foreach (ColorRectPrefab crp in GetChildren())
         {
             crp.Clear();
+        }
+    }
+
+    public void RemoveZone(int index)
+    {
+        var colors = GetNode<ZoneDistribution>("../../..").GetZonesColors();
+        foreach (var child in GetChildren())
+        {
+            if (child is ColorRectPrefab colorRectPrefab)
+            {
+                var aux = colorRectPrefab.GetIdx();
+                if (aux == index)
+                    colorRectPrefab.Clear();
+                else if (aux > index)
+                    colorRectPrefab.SetData(colors[aux - 1], aux - 1);
+            }
         }
     }
 }

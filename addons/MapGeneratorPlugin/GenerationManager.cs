@@ -1,5 +1,6 @@
 using Godot;
 using Godot.Collections;
+using Godot.NativeInterop;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,167 +8,198 @@ using TFG_Godot.Properties;
 using static Tile;
 
 [Tool]
-public partial class GenerationManager : Node
+public partial class GenerationManager
 {
-    float blockScale;
-    Vector2I chunkSize;
-    List<Zone> _zones;
-    List<List<Chunk>> chunkMatrix;
-    uint seed;
-
     public GenerationManager()
     {
-        _zones = new List<Zone>();
-
-        //Zone z1 = new Zone();
-        //z1.Initialize("Zone1", new Color("009b00"));
-        //_zones.Add(z1);
-
-        //Zone z2 = new Zone();
-        //z2.Initialize("Zone2", new Color("cd9a11"));
-        //_zones.Add(z2);
+        configInfo = new ConfigInfo();
     }
 
-    private bool AlreadyStarted()
+    public ConfigInfo configInfo;
+
+    //JSON methods
+    public void LoadCurrentConfig()
     {
-        return true;
+        const string filePath = "res://addons/MapGeneratorPlugin/currentConfig.json";
+        Variant v = JsonConfigIO.Load(filePath);
+        RestoreConfigFromVariant(v);
+    }
+    public void SaveCurrentConfig()
+    {
+        const string filePath = "res://addons/MapGeneratorPlugin/currentConfig.json";
+        var data = BuildCurrentConfigDictionary();
+        JsonConfigIO.Save(filePath, data);
+    }
+    
+    public Variant BuildCurrentConfigDictionary()
+    {
+        return configInfo.ToJson();
+    }
+    public void RestoreConfigFromVariant(Variant v)
+    {
+        configInfo.LoadFromJson(v);
     }
 
-	public Node SceneFinder()
-	{
-        return EditorInterface.Singleton.GetEditedSceneRoot();
-    }
-
-	public void Start(float blockScale, Vector2I chunkSize, Tile.TileType tileType, uint seed, int[,] coherenceTable, bool threeDee, int[] heightOverride)
-	{
-        if (AlreadyStarted())
+    //Generation methods
+    public void Start()
+    {
+        var editedSceneRoot = EditorInterface.Singleton.GetEditedSceneRoot();
+        if (editedSceneRoot != null)
         {
-            this.blockScale = blockScale;
-            this.chunkSize = chunkSize;
-            this.seed = seed;
+            var sw = Stopwatch.StartNew();
 
-            var editedSceneRoot = SceneFinder();
+            var sceneFilePath = editedSceneRoot.SceneFilePath;
+            var sceneName = System.IO.Path.GetFileNameWithoutExtension(sceneFilePath);
 
-            if (editedSceneRoot != null)
+            var packedScene = GD.Load<PackedScene>(sceneFilePath);
+            if (packedScene == null)
             {
-                var sw = Stopwatch.StartNew();
+                GD.PrintErr($"Failed to load scene at {sceneFilePath}");
+                return;
+            }
 
-                var sceneFilePath = editedSceneRoot.SceneFilePath;
-                var sceneName = System.IO.Path.GetFileNameWithoutExtension(sceneFilePath);
+            // Instance the scene
+            var sceneInstance = packedScene.Instantiate();
+            if (sceneInstance == null)
+            {
+                GD.PrintErr("Failed to instance the scene.");
+                return;
+            }
 
-                var packedScene = GD.Load<PackedScene>(sceneFilePath);
-                if (packedScene == null)
-                {
-                    GD.PrintErr($"Failed to load scene at {sceneFilePath}");
-                    return;
-                }
-
-                // Instance the scene
-                var sceneInstance = packedScene.Instantiate();
-                if (sceneInstance == null)
-                {
-                    GD.PrintErr("Failed to instance the scene.");
-                    return;
-                }
-
-                //Chunk Creation
-                Node oldChunky = sceneInstance.FindChild("InitialChunk");
+            //Chunk Creation
+            if (configInfo.DinamicWorld)
+            {
+                Node oldChunky = sceneInstance.FindChild("IndividualChunk");
                 if (oldChunky != null)
                 {
                     sceneInstance.RemoveChild(oldChunky);
                     oldChunky.QueueFree();
                 }
-                Tile tile = GetTileType(tileType);
 
-                chunkMatrix = new List<List<Chunk>> { new List<Chunk>() };
-                chunkMatrix[0].Add(new Chunk(tile));
-                //chunkMatrix[0][0] = new Chunk(tile);
-                chunkMatrix[0][0].Name = "InitialChunk";
-                sceneInstance.AddChild(chunkMatrix[0][0]);
-                chunkMatrix[0][0].Owner = sceneInstance;
-                chunkMatrix[0][0].Initialize(Basis.Identity, new Vector3(0, 0, 0), this.blockScale, this.chunkSize, coherenceTable, threeDee, heightOverride);
-                
-                //Pack Scene
-                var packResult = packedScene.Pack(sceneInstance);
-                if (packResult != Error.Ok)
+                Node oldGen = sceneInstance.FindChild("MapGenerationManager");
+                if (oldGen == null)
                 {
-                    GD.PrintErr($"Failed to pack the scene: {packResult}");
-                    return;
+                    var gen = new Map();
+                    gen.Name = "MapGenerationManager";
+                    sceneInstance.AddChild(gen);
+                    gen.Owner = sceneInstance;
                 }
 
-                // Save the PackedScene to the same path
-                var saveError = ResourceSaver.Save(packedScene, sceneFilePath);
-                if (saveError != Error.Ok)
-                {
-                    GD.PrintErr($"Failed to save the scene: {saveError}");
-                }
-                else
-                {
-                    sw.Stop();
-                    GD.Print($"Scene saved successfully at {sceneFilePath}, time: " + sw.Elapsed);
-                    
-                    EditorInterface.Singleton.ReloadSceneFromPath(sceneFilePath);
-                }
+                JsonConfigIO.Save("res://addons/MapGeneratorPlugin/executeConfig.json", BuildCurrentConfigDictionary());
             }
             else
             {
-                GD.Print("No scene is currently being edited.");
+                Node oldChunky = sceneInstance.FindChild("IndividualChunk");
+                if (oldChunky != null)
+                {
+                    sceneInstance.RemoveChild(oldChunky);
+                    oldChunky.QueueFree();
+                }
+
+                Node oldGen = sceneInstance.FindChild("MapGenerationManager");
+                if (oldGen != null)
+                {
+                    sceneInstance.RemoveChild(oldGen);
+                    oldGen.QueueFree();
+                }
+                GenerateChunk(sceneInstance, "IndividualChunk", new Vector2I(0, 0));
+            }
+
+            //Pack Scene
+            var packResult = packedScene.Pack(sceneInstance);
+            if (packResult != Error.Ok)
+            {
+                GD.PrintErr($"Failed to pack the scene: {packResult}");
+                return;
+            }
+
+            // Save the PackedScene to the same path
+            var saveError = ResourceSaver.Save(packedScene, sceneFilePath);
+            sw.Stop();
+            if (saveError != Error.Ok)
+            {
+                GD.PrintErr($"Failed to save the scene: " + saveError + ", time: " + sw.Elapsed);
+            }
+            else
+            {
+                GD.Print("Scene saved successfully at " + sceneFilePath + ", time: " + sw.Elapsed);
+
+                EditorInterface.Singleton.ReloadSceneFromPath(sceneFilePath);
             }
         }
         else
-            GD.Print("Generation Manager already started.");
+        {
+            GD.Print("No scene is currently being edited.");
+        }
     }
 
+    private Chunk GenerateChunk(Node node, string name, Vector2I chunkPos)
+    {
+        var IndividualChunk = new Chunk(GetTileType((TileType)configInfo.TileType));
+        IndividualChunk.Name = name;
+        node.AddChild(IndividualChunk);
+        IndividualChunk.Owner = node;
+        IndividualChunk.Initialize(new Vector3(chunkPos.X, 0, chunkPos.Y), configInfo.BlockSize, new Vector2I(configInfo.ChunkWide, configInfo.ChunkDeep), GetZones(), configInfo.CoherenceTable, configInfo.ThreeDee, configInfo.HeightOverride, new NoiseAlgorithm(configInfo.Seed, configInfo.Freq2D, configInfo.Freq3D));
+
+        return IndividualChunk;
+    }
+
+    //Zone management methods
     public void AddZone(String zoneName, Color color, ResourcePathList resources)
     {
         Zone zone = new Zone();
         zone.Initialize(zoneName, color, resources);
-        _zones.Add(zone);
+        configInfo.Zones.Add(zone);
     }
 
     public void AddZone(Zone zone)
     {
-        _zones.Add(zone);
+        configInfo.Zones.Add(zone);
     }
 
     public void EditZone(int index, String zoneName, Color color, ResourcePathList resources)
     {
-        _zones[index].Initialize(zoneName, color, resources);
+        configInfo.Zones[index].Initialize(zoneName, color, resources);
     }
 
     public void DeleteZone(int index)
     {
-        _zones[index].Dispose();
+        configInfo.Zones.RemoveAt(index);
     }
 
     public int GetZoneCount()
     {
-        return _zones.Count;
+        return configInfo.Zones.Count;
     }
 
     public Zone[] GetZones() 
-    { 
-        //Debug.Print(_zones.Count.ToString() + " " + _zones.ToArray().Length.ToString());
-        return _zones.ToArray();
+    {
+        return configInfo.Zones.ToArray();
     }
 
     public void ClearZones()
     {
-        _zones.Clear();
+        configInfo.Zones.Clear();
     }
 
     public void ChangeColorZone(int index, Color color)
     {
-        _zones[index].SetColor(color);
+        configInfo.Zones[index].SetColor(color);
     }
 
-    public uint GetSeed()
+    public void SetZonesFromJson(Godot.Collections.Array<Godot.Collections.Dictionary<string, Variant>> data)
     {
-        return seed;
-    }
-
-    public uint GenerateSeed()
-    {
-        return seed = new RandomNumberGenerator().Randi();
+        foreach (var zoneData in data)
+        {
+            var zone = Zone.JsonToZone(zoneData);
+            if (zone != null)
+            {
+                configInfo.Zones.Add(zone);
+            }
+            else
+            {
+                GD.PrintErr("Failed to create zone from JSON data.");
+            }
+        }
     }
 }

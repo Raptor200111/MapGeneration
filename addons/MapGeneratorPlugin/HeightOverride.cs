@@ -1,25 +1,26 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 [Tool]
 public partial class HeightOverride : PaintGrid
 {
-    public int[] GetHeightOverride()
+    public Godot.Collections.Array<int> GetHeightOverride()
     {
         int numChildren = GetChildCount();
-        int[] result = new int[10];
+        var result = new Godot.Collections.Array<int>();
 
         for (int i = 0; i < 10; i++)
         {
-            result[i] = GetChild(i).GetNode<ColorRectPrefab>(".").GetIdx();
+            result.Add(GetChild(i).GetNode<ColorRectPrefab>(".").GetIdx());
         }
         
         return result;
     }
 
-    public void SetHeightOverride(int[] heightOverride, Color[] colors)
+    public void SetHeightOverride(int[] heightOverride)
     {
-        this.colors = colors;
+        var colors = GetNode<ZoneDistribution>("../../..").GetZonesColors();
         for (int i = 0; i < 10; i++)
         {
             var child = GetChild(i).GetNode<ColorRectPrefab>(".");

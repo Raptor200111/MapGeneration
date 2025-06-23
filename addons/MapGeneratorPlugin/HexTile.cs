@@ -4,7 +4,7 @@ using System;
 public partial class HexTile : Tile
 {
     float hexagonHeight = (float)Math.Sqrt(3);
-    public override Transform3D[,] GetMatrix(float blockScale, Vector2I chunkSize, Vector3 origin)
+    public override Transform3D[,] GetMatrix(Vector2I chunkSize)
     {
         Transform3D[,] matrix = new Transform3D[chunkSize.X, chunkSize.Y];
         Vector3 offset = new Vector3((3 - (3*chunkSize.X))/4f, 0, hexagonHeight/2f * (0.5f - chunkSize.Y) );
@@ -15,8 +15,6 @@ public partial class HexTile : Tile
             {
                 Vector3 translation = new Vector3(i * 1.5f, 0, (j + 0.5f*(i%2)) * hexagonHeight );
                 translation += offset;
-                translation *= blockScale;
-                translation += origin;
 
                 matrix[i, j] = new Transform3D(Basis.Identity, translation);
             }

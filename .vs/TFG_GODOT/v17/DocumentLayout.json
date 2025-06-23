@@ -7,32 +7,16 @@
       "RelativeMoniker": "D:0:0:{4902D438-DE24-4021-842D-AF4D39ED1A6E}|TFG_Godot.csproj|solutionrelative:addons\\mapgeneratorplugin\\dockinterfacemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4902D438-DE24-4021-842D-AF4D39ED1A6E}|TFG_Godot.csproj|c:\\users\\alvar\\documents\\githubrepos_raptor\\mapgeneration\\addons\\mapgeneratorplugin\\chunk.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4902D438-DE24-4021-842D-AF4D39ED1A6E}|TFG_Godot.csproj|solutionrelative:addons\\mapgeneratorplugin\\chunk.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4902D438-DE24-4021-842D-AF4D39ED1A6E}|TFG_Godot.csproj|c:\\users\\alvar\\documents\\githubrepos_raptor\\mapgeneration\\addons\\mapgeneratorplugin\\mapgeneratorplugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4902D438-DE24-4021-842D-AF4D39ED1A6E}|TFG_Godot.csproj|solutionrelative:addons\\mapgeneratorplugin\\mapgeneratorplugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{4902D438-DE24-4021-842D-AF4D39ED1A6E}|TFG_Godot.csproj|c:\\users\\alvar\\documents\\githubrepos_raptor\\mapgeneration\\addons\\mapgeneratorplugin\\zonedistribution.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4902D438-DE24-4021-842D-AF4D39ED1A6E}|TFG_Godot.csproj|solutionrelative:addons\\mapgeneratorplugin\\zonedistribution.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4902D438-DE24-4021-842D-AF4D39ED1A6E}|TFG_Godot.csproj|c:\\users\\alvar\\documents\\githubrepos_raptor\\mapgeneration\\addons\\mapgeneratorplugin\\zonecontent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4902D438-DE24-4021-842D-AF4D39ED1A6E}|TFG_Godot.csproj|solutionrelative:addons\\mapgeneratorplugin\\zonecontent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4902D438-DE24-4021-842D-AF4D39ED1A6E}|TFG_Godot.csproj|c:\\users\\alvar\\documents\\githubrepos_raptor\\mapgeneration\\addons\\mapgeneratorplugin\\newzonecontent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4902D438-DE24-4021-842D-AF4D39ED1A6E}|TFG_Godot.csproj|solutionrelative:addons\\mapgeneratorplugin\\newzonecontent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4902D438-DE24-4021-842D-AF4D39ED1A6E}|TFG_Godot.csproj|c:\\users\\alvar\\documents\\githubrepos_raptor\\mapgeneration\\addons\\mapgeneratorplugin\\heightoverride.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4902D438-DE24-4021-842D-AF4D39ED1A6E}|TFG_Godot.csproj|solutionrelative:addons\\mapgeneratorplugin\\heightoverride.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4902D438-DE24-4021-842D-AF4D39ED1A6E}|TFG_Godot.csproj|c:\\users\\alvar\\documents\\githubrepos_raptor\\mapgeneration\\addons\\mapgeneratorplugin\\paintgrid.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4902D438-DE24-4021-842D-AF4D39ED1A6E}|TFG_Godot.csproj|solutionrelative:addons\\mapgeneratorplugin\\paintgrid.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4902D438-DE24-4021-842D-AF4D39ED1A6E}|TFG_Godot.csproj|c:\\users\\alvar\\documents\\githubrepos_raptor\\mapgeneration\\addons\\mapgeneratorplugin\\coherencetable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4902D438-DE24-4021-842D-AF4D39ED1A6E}|TFG_Godot.csproj|solutionrelative:addons\\mapgeneratorplugin\\coherencetable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4902D438-DE24-4021-842D-AF4D39ED1A6E}|TFG_Godot.csproj|c:\\users\\alvar\\documents\\githubrepos_raptor\\mapgeneration\\addons\\mapgeneratorplugin\\colorrectprefab.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4902D438-DE24-4021-842D-AF4D39ED1A6E}|TFG_Godot.csproj|solutionrelative:addons\\mapgeneratorplugin\\colorrectprefab.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -42,45 +26,32 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "MapGeneratorPlugin.cs",
-              "DocumentMoniker": "C:\\Users\\alvar\\Documents\\GitHubRepos_Raptor\\MapGeneration\\addons\\MapGeneratorPlugin\\MapGeneratorPlugin.cs",
-              "RelativeDocumentMoniker": "addons\\MapGeneratorPlugin\\MapGeneratorPlugin.cs",
-              "ToolTip": "C:\\Users\\alvar\\Documents\\GitHubRepos_Raptor\\MapGeneration\\addons\\MapGeneratorPlugin\\MapGeneratorPlugin.cs",
-              "RelativeToolTip": "addons\\MapGeneratorPlugin\\MapGeneratorPlugin.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAA5AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-07T18:26:04.968Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Chunk.cs",
-              "DocumentMoniker": "C:\\Users\\alvar\\Documents\\GitHubRepos_Raptor\\MapGeneration\\addons\\MapGeneratorPlugin\\Chunk.cs",
-              "RelativeDocumentMoniker": "addons\\MapGeneratorPlugin\\Chunk.cs",
-              "ToolTip": "C:\\Users\\alvar\\Documents\\GitHubRepos_Raptor\\MapGeneration\\addons\\MapGeneratorPlugin\\Chunk.cs",
-              "RelativeToolTip": "addons\\MapGeneratorPlugin\\Chunk.cs",
-              "ViewState": "AgIAADwAAAAAAAAAAADwv1YAAABKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-07T17:15:07.191Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
               "Title": "ZoneDistribution.cs",
               "DocumentMoniker": "C:\\Users\\alvar\\Documents\\GitHubRepos_Raptor\\MapGeneration\\addons\\MapGeneratorPlugin\\ZoneDistribution.cs",
               "RelativeDocumentMoniker": "addons\\MapGeneratorPlugin\\ZoneDistribution.cs",
               "ToolTip": "C:\\Users\\alvar\\Documents\\GitHubRepos_Raptor\\MapGeneration\\addons\\MapGeneratorPlugin\\ZoneDistribution.cs",
               "RelativeToolTip": "addons\\MapGeneratorPlugin\\ZoneDistribution.cs",
-              "ViewState": "AgIAACUAAAAAAAAAAAAjwDwAAAAIAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-07T14:33:01.863Z",
+              "WhenOpened": "2025-06-23T11:12:50.348Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "NewZoneContent.cs",
+              "DocumentMoniker": "C:\\Users\\alvar\\Documents\\GitHubRepos_Raptor\\MapGeneration\\addons\\MapGeneratorPlugin\\NewZoneContent.cs",
+              "RelativeDocumentMoniker": "addons\\MapGeneratorPlugin\\NewZoneContent.cs",
+              "ToolTip": "C:\\Users\\alvar\\Documents\\GitHubRepos_Raptor\\MapGeneration\\addons\\MapGeneratorPlugin\\NewZoneContent.cs",
+              "RelativeToolTip": "addons\\MapGeneratorPlugin\\NewZoneContent.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-23T11:11:17.972Z",
               "EditorCaption": ""
             },
             {
@@ -91,61 +62,22 @@
               "RelativeDocumentMoniker": "addons\\MapGeneratorPlugin\\DockInterfaceManager.cs",
               "ToolTip": "C:\\Users\\alvar\\Documents\\GitHubRepos_Raptor\\MapGeneration\\addons\\MapGeneratorPlugin\\DockInterfaceManager.cs",
               "RelativeToolTip": "addons\\MapGeneratorPlugin\\DockInterfaceManager.cs",
-              "ViewState": "AgIAAOYAAAAAAAAAAAAUwAUBAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAABUBAAAAAAAAAAAUwCEBAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-07T16:36:35.811Z",
+              "WhenOpened": "2025-06-23T11:11:02.242Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "ZoneContent.cs",
-              "DocumentMoniker": "C:\\Users\\alvar\\Documents\\GitHubRepos_Raptor\\MapGeneration\\addons\\MapGeneratorPlugin\\ZoneContent.cs",
-              "RelativeDocumentMoniker": "addons\\MapGeneratorPlugin\\ZoneContent.cs",
-              "ToolTip": "C:\\Users\\alvar\\Documents\\GitHubRepos_Raptor\\MapGeneration\\addons\\MapGeneratorPlugin\\ZoneContent.cs",
-              "RelativeToolTip": "addons\\MapGeneratorPlugin\\ZoneContent.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAFAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "ColorRectPrefab.cs",
+              "DocumentMoniker": "C:\\Users\\alvar\\Documents\\GitHubRepos_Raptor\\MapGeneration\\addons\\MapGeneratorPlugin\\ColorRectPrefab.cs",
+              "RelativeDocumentMoniker": "addons\\MapGeneratorPlugin\\ColorRectPrefab.cs",
+              "ToolTip": "C:\\Users\\alvar\\Documents\\GitHubRepos_Raptor\\MapGeneration\\addons\\MapGeneratorPlugin\\ColorRectPrefab.cs",
+              "RelativeToolTip": "addons\\MapGeneratorPlugin\\ColorRectPrefab.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-07T18:34:01.755Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "HeightOverride.cs",
-              "DocumentMoniker": "C:\\Users\\alvar\\Documents\\GitHubRepos_Raptor\\MapGeneration\\addons\\MapGeneratorPlugin\\HeightOverride.cs",
-              "RelativeDocumentMoniker": "addons\\MapGeneratorPlugin\\HeightOverride.cs",
-              "ToolTip": "C:\\Users\\alvar\\Documents\\GitHubRepos_Raptor\\MapGeneration\\addons\\MapGeneratorPlugin\\HeightOverride.cs",
-              "RelativeToolTip": "addons\\MapGeneratorPlugin\\HeightOverride.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-07T11:37:11.455Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "PaintGrid.cs",
-              "DocumentMoniker": "C:\\Users\\alvar\\Documents\\GitHubRepos_Raptor\\MapGeneration\\addons\\MapGeneratorPlugin\\PaintGrid.cs",
-              "RelativeDocumentMoniker": "addons\\MapGeneratorPlugin\\PaintGrid.cs",
-              "ToolTip": "C:\\Users\\alvar\\Documents\\GitHubRepos_Raptor\\MapGeneration\\addons\\MapGeneratorPlugin\\PaintGrid.cs",
-              "RelativeToolTip": "addons\\MapGeneratorPlugin\\PaintGrid.cs",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAAwB8AAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-07T11:43:57.504Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "CoherenceTable.cs",
-              "DocumentMoniker": "C:\\Users\\alvar\\Documents\\GitHubRepos_Raptor\\MapGeneration\\addons\\MapGeneratorPlugin\\CoherenceTable.cs",
-              "RelativeDocumentMoniker": "addons\\MapGeneratorPlugin\\CoherenceTable.cs",
-              "ToolTip": "C:\\Users\\alvar\\Documents\\GitHubRepos_Raptor\\MapGeneration\\addons\\MapGeneratorPlugin\\CoherenceTable.cs",
-              "RelativeToolTip": "addons\\MapGeneratorPlugin\\CoherenceTable.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAAwB0AAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-07T17:04:24.812Z",
+              "WhenOpened": "2025-06-23T11:11:01.431Z",
               "EditorCaption": ""
             }
           ]

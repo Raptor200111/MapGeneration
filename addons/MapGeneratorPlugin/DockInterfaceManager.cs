@@ -1,21 +1,16 @@
-
 using Godot;
-using Godot.NativeInterop;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using TFG_Godot.Properties;
+using System.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 [Tool]
-public partial class DockInterfaceManager : Control
+public partial class DockInterfaceManager : ScrollContainer
 {
-    bool threeDee = false;
     [Export] PackedScene zoneContentPrefab;
     [Export] PackedScene newZoneContentPrefab;
     //[Export] PackedScene zoneCoherencePrefab;
 
+    [Export] NodePath dinamicSwitchPath;
     [Export] NodePath dimesionSwitchPath;
     [Export] NodePath zoneDistributionPath;
     [Export] NodePath blockSizingLineEditPath;
@@ -28,7 +23,10 @@ public partial class DockInterfaceManager : Control
     [Export] NodePath zoneScrollContainerPath;
     [Export] NodePath marginContainerPath;
     [Export] NodePath coherenceTableButtonPath;
+    [Export] NodePath frequency2DSpinBoxPath;
+    [Export] NodePath frequency3DSpinBoxPath;
 
+    CheckButton _dinamicSwitch;
     CheckButton _dimesionSwitch;
     ZoneDistribution _zoneDistribution;
     LineEdit _blockSizingLineEdit;
@@ -41,6 +39,8 @@ public partial class DockInterfaceManager : Control
     ScrollContainer _zoneScrollContainer;
     Control _marginContainer;
     Button _coherenceTableButton;
+    SpinBox _frequency2DSpinBox;
+    SpinBox _frequency3DSpinBox;
 
     bool newZoneActive = false;
     bool editedZoneActive = false;
@@ -54,6 +54,7 @@ public partial class DockInterfaceManager : Control
     //GODOT OVERRIDE FUNCTIONS:
     public override void _Ready()
     {
+        _dinamicSwitch = GetNode<CheckButton>(dinamicSwitchPath);
         _dimesionSwitch = GetNode<CheckButton>(dimesionSwitchPath);
         _zoneDistribution = GetNode<ZoneDistribution>(zoneDistributionPath);
         _blockSizingLineEdit = GetNode<LineEdit>(blockSizingLineEditPath);
@@ -66,215 +67,147 @@ public partial class DockInterfaceManager : Control
         _zoneScrollContainer = GetNode<ScrollContainer>(zoneScrollContainerPath);
         _marginContainer = GetNode<Control>(marginContainerPath);
         _coherenceTableButton = GetNode<Button>(coherenceTableButtonPath);
-        
-        _seedLineEdit.Text = "12345678"; //GenerateSeed();
+        _frequency2DSpinBox = GetNode<SpinBox>(frequency2DSpinBoxPath);
+        _frequency3DSpinBox = GetNode<SpinBox>(frequency3DSpinBoxPath);
+
         LoadCurrentConfig();
     }
 
     //CONFIGURATION FUNCTIONS:
-    private void LoadCurrentConfig()
+    private void SetConfigInfo()
     {
-        const string filePath = "res://addons/MapGeneratorPlugin/currentConfig.json";
-        Variant v = JsonConfigIO.Load(filePath);
-        RestoreConfigFromVariant(v);
+        ConfigInfo configInfo = GenerationManager.configInfo;
+        _dinamicSwitch.ButtonPressed = configInfo.DinamicWorld;
+        _dimesionSwitch.ButtonPressed = configInfo.ThreeDee;
+        _blockSizingLineEdit.Text = configInfo.BlockSize.ToString();
+        _wideLineEdit.Text = configInfo.ChunkWide.ToString();
+        _deepLineEdit.Text = configInfo.ChunkDeep.ToString();
+        _tileTypeOptionButton.Selected = configInfo.TileType;
+        _seedLineEdit.Text = configInfo.Seed.ToString();
+        _frequency2DSpinBox.Value = configInfo.Freq2D;
+        _frequency3DSpinBox.Value = configInfo.Freq3D;
+
+        int[][] coherenceTable = configInfo.CoherenceTable
+            .Select(innerArray => innerArray.ToArray())
+            .ToArray();
+
+        _zoneDistribution.Initialize(this, coherenceTable, configInfo.HeightOverride.ToArray());
+        
+        LoadZones();
     }
-    private void SaveCurrentConfig()
-    {
-        const string filePath = "res://addons/MapGeneratorPlugin/currentConfig.json";
-        var data = BuildCurrentConfigDictionary();
-        JsonConfigIO.Save(filePath, data);
-    }
+
     public void ResetCurrentConfig()
     {
-        threeDee = false;
-        _dimesionSwitch._Toggled(false);
-        _blockSizingLineEdit.Text = "1";
-        _wideLineEdit.Text = "";
-        _deepLineEdit.Text = "";
-        _tileTypeOptionButton.Selected = 0;
-        _seedLineEdit.Text = "12345678";
-
         GenerationManager = new GenerationManager();
-        for (int i = 0; i < GenerationManager.GetZoneCount(); i++)
-            GenerationManager.DeleteZone(i);
 
-        int[,] table = new int[10, 10];
-        for (int y = 0; y < 10; y++)
-        {
-            for (int x = 0; x < 10; x++)
-                table[y, x] = -1;
-        }
-
-        int[] heightOverride = new int[10];
-        for (int i = 0; i < heightOverride.Length; i++)
-            heightOverride[i] = -1;
-
-        _zoneDistribution.Initialize(this, table, threeDee, heightOverride);
-
-        LoadZones();
-
+        SetConfigInfo();
         SaveCurrentConfig();
     }
-    public void SaveConfigAs()
+    private void LoadCurrentConfig()
     {
-        JsonConfigIO.ShowSaveDialog(BuildCurrentConfigDictionary);
-    }
-    public void LoadConfigFromDialog()
-    {
-        JsonConfigIO.ShowLoadDialog(RestoreConfigFromVariant);
-    }
-    private Variant BuildCurrentConfigDictionary()
-    {
-        var data = new Godot.Collections.Dictionary<string, Variant>
-        {
-            ["3D"] = threeDee,
-            ["BlockSize"] = _blockSizingLineEdit.Text,
-            ["ChunkWide"] = _wideLineEdit.Text,
-            ["ChunkDeep"] = _deepLineEdit.Text,
-            ["TileType"] = _tileTypeOptionButton.Selected,
-            ["Seed"] = _seedLineEdit.Text,
-        };
-
-        var zonesArr = new Godot.Collections.Array<Godot.Collections.Dictionary<string, Variant>>();
-        foreach (var z in GenerationManager.GetZones())
-            zonesArr.Add(z.ToJson());
-        data["Zones"] = zonesArr;
-
-        int[,] coherenceTable = _zoneDistribution.GetCoherenceTable();
-        var outer = new Godot.Collections.Array<Godot.Collections.Array<int>>();
-        for (int y = 0; y < coherenceTable.GetLength(0); y++)
-        {
-            var row = new Godot.Collections.Array<int>();
-            for (int x = 0; x < coherenceTable.GetLength(1); x++)
-                row.Add(coherenceTable[y, x]);
-            outer.Add(row);
-        }
-        data["CoherenceTable"] = outer;
-        data["HeightOverride"] = _zoneDistribution.GetHeightOverride();
-
-        return data;
-    }
-    private void RestoreConfigFromVariant(Variant v)
-    {
-        if (v.VariantType != Variant.Type.Dictionary) return;
-        var data = (Godot.Collections.Dictionary<string, Variant>)v;
-
-        threeDee = (bool)data["3D"];
-        //_dimesionSwitch._Toggled(threeDee);
-        _dimesionSwitch.ButtonPressed = threeDee;
-        _blockSizingLineEdit.Text = data["BlockSize"].AsString();
-        _wideLineEdit.Text = data["ChunkWide"].AsString();
-        _deepLineEdit.Text = data["ChunkDeep"].AsString();
-        _tileTypeOptionButton.Selected = (int)data["TileType"];
-        _seedLineEdit.Text = data["Seed"].AsString();
-
-        GenerationManager = new GenerationManager();
-        var zonesArray = (Godot.Collections.Array)data["Zones"];
-        foreach (Godot.Collections.Dictionary<string, Variant> z in zonesArray)
-            GenerationManager.AddZone(Zone.JsonToZone(z));
-
-        var outer = (Godot.Collections.Array)data["CoherenceTable"];
-        int h = outer.Count, w = h > 0 ? ((Godot.Collections.Array)outer[0]).Count : 0;
-        int[,] table = new int[h, w];
-        for (int y = 0; y < h; y++)
-        {
-            var row = (Godot.Collections.Array)outer[y];
-            for (int x = 0; x < w; x++)
-                table[y, x] = row[x].AsInt32();
-        }
-
-        int[] heightTable = (int[]) data["HeightOverride"];
-
-        _zoneDistribution.Initialize(this, table, threeDee, heightTable);
-
-        LoadZones();
+        GenerationManager.LoadCurrentConfig();
+        SetConfigInfo();
     }
 
-    //BUTTONS FUNCTIONS:
-    public void GenerateButtonPressed()
+    private void SaveCurrentConfig()
     {
-        //Debug.Print("Hello Scene!");
-        //generationManager = new GenerationManager();
-
-        //generationManager.blockScale = 
-        SaveCurrentConfig();
-
-        string blockSize = _blockSizingLineEdit.Text;
-        string blockSizeName = "\"Block Size Size\"";
-        if (blockSize == "") 
-        {
-            blockSize = "1"; // Default value
-        }
-        if (! blockSize.IsValidFloat())
-        {
-            Debug.Print(blockSizeName + " Not valid number");
-            return;
-        }
-        if (blockSize.ToFloat() < 0)
-        {
-            Debug.Print(blockSizeName + " Has to be positive");
-            return;
-        }
-
-        string wide = _wideLineEdit.Text;
-        string deep = _deepLineEdit.Text;
-
-        string wideName = "\"Chunk Wide\"";
-        string deepName = "\"Deep Wide\"";
-
-        if (wide == "")
-        {
-            wide = "100";
-        }
-        if (deep == "")
-        {
-            deep = "100";
-        }
-        if (!wide.IsValidInt() || !deep.IsValidInt())
-        {
-            Debug.Print(deepName + " or " + wideName + " Not valid number");
-            return;
-        }
-        if (wide.ToInt() < 0 || deep.ToInt() < 0)
-        {
-            Debug.Print(deepName + " or " + wideName + " Has to be positive");
-            return;
-        }
-
-        if (GenerationManager.GetZoneCount() <= 0)
-        {
-            Debug.Print("At least 1 zone has to be created.");
-            return;
-        }
-
-        int tileType = _tileTypeOptionButton.Selected;
-        
-        string seedText = _seedLineEdit.Text;
-        if (seedText == "")
-        {
-            Debug.Print("Seed is Empty");
-            return;
-        }
-        if (!uint.TryParse(seedText, out uint seed))
-        {
-            Debug.Print("Seed is Not valid number");
-            return;
-        }
-
-        GenerationManager.Start(blockSize.ToFloat(), new Vector2I(wide.ToInt(), deep.ToInt()), (Tile.TileType)tileType, seed, _zoneDistribution.GetCoherenceTable(), threeDee, _zoneDistribution.GetHeightOverride());
+        GenerationManager.SaveCurrentConfig();
     }
 
-    public void DimensionButtonToggle(bool toggled)
-    {
-        threeDee = (toggled);
-        SaveCurrentConfig();
-    }
+    //BUTTON INPUTS
 
     public void RefreshButtonPressed()
     {
         SaveCurrentConfig();
         EditorInterface.Singleton.SetPluginEnabled("MapGeneratorPlugin", false);
         EditorInterface.Singleton.SetPluginEnabled("MapGeneratorPlugin", true);
+    }
+
+    public void SaveConfigAs()
+    {
+        JsonConfigIO.ShowSaveDialog(GenerationManager.BuildCurrentConfigDictionary);
+    }
+
+    public void LoadConfigFromDialog()
+    {
+        JsonConfigIO.ShowLoadDialog(RestoreConfigFromVariant);
+    }
+
+    private void RestoreConfigFromVariant(Variant v)
+    {
+        GenerationManager.RestoreConfigFromVariant(v);
+        SetConfigInfo();
+    }
+
+    public void StaticButtonToggle(bool toggled)
+    {
+        GenerationManager.configInfo.DinamicWorld = toggled;
+        SaveCurrentConfig();
+    }
+    public void DimensionButtonToggle(bool toggled)
+    {
+        GenerationManager.configInfo.ThreeDee = toggled;
+        SaveCurrentConfig();
+    }
+
+    public void TileTypeChanged(int index)
+    {
+        GenerationManager.configInfo.TileType = index;
+        SaveCurrentConfig();
+    }
+
+    public void BlockSizeChanged(string text)
+    {
+        if (text == "" || text == null)
+        {
+            GenerationManager.configInfo.BlockSize = 1.0f;
+            SaveCurrentConfig();
+        }
+        else if (text.IsValidFloat())
+        {
+            GenerationManager.configInfo.BlockSize = text.ToFloat();
+            SaveCurrentConfig();
+        }
+        else
+        {
+            Debug.Print("Block Size Not valid number");
+        }
+    }
+
+    public void WideChanged(string text)
+    {
+        if (text == "" || text == null)
+        {
+            GenerationManager.configInfo.ChunkWide = 100;
+            SaveCurrentConfig();
+        }
+        else if (text.IsValidInt())
+        {
+            GenerationManager.configInfo.ChunkWide = text.ToInt();
+            SaveCurrentConfig();
+        }
+        else
+        {
+            Debug.Print("Chunk Wide Not valid number");
+        }
+    }
+
+    public void DeepChanged(string text)
+    {
+        if (text == "" || text == null)
+        {
+            GenerationManager.configInfo.ChunkDeep = 100;
+            SaveCurrentConfig();
+        }
+        else if (text.IsValidInt())
+        {   
+            GenerationManager.configInfo.ChunkDeep = text.ToInt();
+            SaveCurrentConfig();
+        }
+        else
+        {
+            Debug.Print("Chunk Deep Not valid number");
+        }
     }
 
     public void PlusZoneButtonPressed()
@@ -286,7 +219,7 @@ public partial class DockInterfaceManager : Control
         }
         else
         {
-            Debug.Print("Please, save the other zone.");
+            Debug.Print("Please, save the editing zone.");
         }
     }
 
@@ -308,6 +241,7 @@ public partial class DockInterfaceManager : Control
         if (index == -1)
         {
             GenerationManager.AddZone(name, color, resources);
+            _zoneDistribution.AddZone();
         }
         else
         {
@@ -332,6 +266,8 @@ public partial class DockInterfaceManager : Control
         if (editedZoneActive)
         {
             editedZoneActive = false;
+            GenerationManager.DeleteZone(index);
+            _zoneDistribution.DeleteZone(index);
             LoadZones(index);
             return;
         }
@@ -341,16 +277,15 @@ public partial class DockInterfaceManager : Control
 
     private void LoadZones(int index = -1)
     {
-        if ( index == -1 && editedZoneActive)
+        if (index == -1 && editedZoneActive)
         {
             Debug.Print("Error, pass an index");
             return;
         }
-        var zones = GenerationManager.GetZones();
 
-        if (zones.Length > 0 || newZoneActive)
+        if (GenerationManager.configInfo.Zones.Count > 0 || newZoneActive)
         {
-            _zoneScrollContainer.CustomMinimumSize = new Vector2(0, zoneContentPrefab.Instantiate<Control>().Size.Y);
+            //_zoneScrollContainer.CustomMinimumSize = new Vector2(0, 10000);
 
             if (_zoneList != null)
             {
@@ -373,7 +308,9 @@ public partial class DockInterfaceManager : Control
                     editZone.Owner = _zoneList.Owner;
                 }
 
-                for (int i = 0; i < zones.Length; i++)
+                var zones = GenerationManager.configInfo.Zones;
+
+                for (int i = 0; i < zones.Count; i++)
                 {
                     if (editedZoneActive && i == index)
                     {
@@ -382,7 +319,7 @@ public partial class DockInterfaceManager : Control
                         _zoneList.AddChild(editZone);
                         editZone.Owner = _zoneList.Owner;
 
-                        editZone.GetNode<NewZoneContent>(".").Edit(zones[i].GetZoneName(), zones[i].GetColor(), zones[i].GetResources());
+                        editZone.GetNode<NewZoneContent>(".").Edit(zones[i].GetZoneName(), zones[i].GetColor(),  zones[i].GetResources());
                     }
                     else
                     {
@@ -392,6 +329,7 @@ public partial class DockInterfaceManager : Control
                         zoneContent.Owner = _zoneList.Owner;
 
                         zoneContent.GetNode<ZoneContent>(".").SetElements(zones[i].GetZoneName(), zones[i].GetColor());
+
                     }
                 }
             }
@@ -412,27 +350,57 @@ public partial class DockInterfaceManager : Control
         //Debug.Print(GetNode<Control>("%ZoneList").GetChildCount().ToString());
     }
 
-    public void GenerateSeed()
-    {
-        _seedLineEdit.Text = GenerationManager.GenerateSeed().ToString();
-        SaveCurrentConfig();
-    }
-
     public void CoherenceTableButtonPressed()
     {
         _marginContainer.Visible = false;
         _coherenceTableButton.Visible = false;
         _zoneDistribution.Visible = true;
-
-        _zoneDistribution.Show(threeDee);
     }
 
-    public void SaveZoneDistribution()
+    public void SaveZoneDistribution(Godot.Collections.Array<Godot.Collections.Array<int>> coherenceTable, Godot.Collections.Array<int> heightOverride)
     {
+        GenerationManager.configInfo.CoherenceTable = coherenceTable;
+        GenerationManager.configInfo.HeightOverride = heightOverride;
         _marginContainer.Visible = true;
         _coherenceTableButton.Visible = true;
         _zoneDistribution.Visible = false;
         SaveCurrentConfig();
     }
-}
 
+    public void SeedChanged(string text)
+    {
+        if (text.IsValidInt())
+        {
+            GenerationManager.configInfo.Seed = (uint)text.ToInt();
+            SaveCurrentConfig();
+        }
+        else
+        {
+            Debug.Print("Seed Not valid number");
+        }
+    }
+    public void GenerateSeed()
+    {
+        uint newSeed = new RandomNumberGenerator().Randi();
+        GenerationManager.configInfo.Seed = newSeed;
+        _seedLineEdit.Text = newSeed.ToString();
+        SaveCurrentConfig();
+    }
+
+    public void Frequency2DChanged(float value)
+    {
+        GenerationManager.configInfo.Freq2D = (float)_frequency2DSpinBox.Value;
+        SaveCurrentConfig();
+    }
+
+    public void Frequency3DChanged(float value)
+    {
+        GenerationManager.configInfo.Freq3D = (float)_frequency3DSpinBox.Value;
+        SaveCurrentConfig();
+    }
+
+    public void GenerateButtonPressed()
+    {
+        GenerationManager.Start();
+    }
+}
