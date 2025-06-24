@@ -28,6 +28,7 @@ layout_mode = 2
 layout_mode = 2
 value = 100.0
 suffix = "%"
+select_all_on_focus = true
 
 [node name="Button" type="Button" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2

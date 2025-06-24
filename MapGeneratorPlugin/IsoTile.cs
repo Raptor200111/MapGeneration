@@ -3,17 +3,17 @@ using System;
 
 public partial class IsoTile : Tile
 {
-    float triangleHeight = (float)Math.Sqrt(3) / 2f;
+    float isoHeight = (float)Math.Sqrt(3) / 2f;
     public override Transform3D[,] GetMatrix(Vector2I chunkSize)
     {
         Transform3D[,] matrix = new Transform3D[chunkSize.X, chunkSize.Y];
-        Vector3 offset = new Vector3(triangleHeight/2f * (1-chunkSize.X), 0, (0.5f - chunkSize.Y)/2f);
+        Vector3 offset = new Vector3(isoHeight/2f * (1-chunkSize.X), 0, (0.5f - chunkSize.Y)/2f);
 
         for (int j = 0; j < chunkSize.Y; j++)
         {
             for (int i = 0; i < chunkSize.X; i++)
             {
-                Vector3 translation = new Vector3(i * triangleHeight, 0, (j + 0.5f * (i % 2)) * 1);
+                Vector3 translation = new Vector3(i * isoHeight, 0, (j + 0.5f * (i % 2)) * 1);
                 translation += offset;
 
                 matrix[i, j] = new Transform3D(Basis.Identity, translation);

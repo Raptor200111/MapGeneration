@@ -67,7 +67,11 @@ public partial class Chunk : Node3D
 
                 var aabb = mesh.GetAabb();
                 var size = aabb.Size;
-                float s = 1f / Mathf.Max(size.X, size.Z);
+                float s = 1f / size.X;
+                if (_tile is HexTile)
+                    s = 2f / size.X;
+                else if (_tile is IsoTile)
+                    s = Mathf.Sqrt(0.75f) * 2 / size.X;
                 Basis scaleBasis = Basis.Identity.Scaled(Vector3.One * s);
 
                 var mm = new MultiMesh

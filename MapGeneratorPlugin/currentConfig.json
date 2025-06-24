@@ -1,15 +1,63 @@
 {
-	"3D": true,
+	"3D": false,
 	"BlockSize": 1,
-	"ChunkDeep": 100,
-	"ChunkWide": 100,
+	"ChunkDeep": 500,
+	"ChunkWide": 500,
 	"CoherenceTable": [
 		[
+			3,
+			3,
+			3,
+			3,
+			0,
+			0,
+			8,
+			8,
+			8,
+			8
+		],
+		[
+			3,
+			3,
+			3,
+			3,
+			0,
+			0,
+			8,
+			8,
+			8,
+			8
+		],
+		[
+			3,
+			3,
+			3,
+			3,
+			0,
+			0,
+			8,
+			8,
+			8,
+			8
+		],
+		[
+			3,
+			3,
+			3,
+			3,
+			0,
+			0,
+			8,
+			8,
+			8,
+			8
+		],
+		[
 			0,
 			0,
 			0,
 			0,
-			0,
+			1,
 			1,
 			1,
 			1,
@@ -21,30 +69,6 @@
 			0,
 			0,
 			0,
-			0,
-			1,
-			1,
-			1,
-			1,
-			1
-		],
-		[
-			0,
-			0,
-			0,
-			0,
-			0,
-			1,
-			1,
-			1,
-			1,
-			1
-		],
-		[
-			0,
-			0,
-			0,
-			0,
 			1,
 			1,
 			1,
@@ -56,113 +80,203 @@
 			0,
 			0,
 			0,
+			0,
 			1,
 			1,
-			1,
-			1,
-			1,
-			1,
-			1
+			2,
+			2,
+			2,
+			2
 		],
 		[
+			0,
+			0,
+			0,
+			0,
 			1,
 			1,
-			1,
-			1,
-			1,
-			1,
-			1,
-			1,
-			1,
-			1
+			2,
+			2,
+			2,
+			2
 		],
 		[
+			0,
+			0,
+			0,
+			0,
 			1,
 			1,
-			1,
-			1,
-			1,
-			1,
-			1,
-			1,
-			1,
-			1
+			2,
+			2,
+			2,
+			2
 		],
 		[
+			0,
+			0,
+			0,
+			0,
 			1,
 			1,
-			1,
-			1,
-			1,
-			1,
-			1,
-			1,
-			1,
-			1
-		],
-		[
-			1,
-			1,
-			1,
-			1,
-			1,
-			1,
-			1,
-			1,
-			1,
-			1
-		],
-		[
-			1,
-			1,
-			1,
-			1,
-			1,
-			1,
-			1,
-			1,
-			1,
-			1
+			2,
+			2,
+			2,
+			2
 		]
 	],
 	"DinamicWorld": false,
-	"Freq2D": 0.00300000002607703,
-	"Freq3D": 0.00600000005215406,
+	"Freq2D": 0.00400000018998981,
+	"Freq3D": 0.00800000037997961,
 	"HeightOverride": [
 		-1,
 		-1,
 		-1,
 		-1,
-		-1,
-		-1,
-		-1,
-		-1,
-		-1,
-		-1
+		3,
+		6,
+		6,
+		6,
+		6,
+		6
 	],
-	"Seed": 12345678,
+	"Seed": 1583140524,
 	"TileType": 0,
 	"Zones": [
 		{
-			"Color": 3754569471,
-			"Name": "desert",
+			"Color": 3305073151,
+			"Name": "grass1",
 			"Resources": [
 				[
-					"res://GLB_Objects/sand.glb",
+					"res://GLB_Objects/box/sprite_00.glb",
+					19
+				],
+				[
+					"res://GLB_Objects/box/sprite_01.glb",
+					33
+				],
+				[
+					"res://GLB_Objects/box/sprite_02.glb",
+					47
+				]
+			]
+		},
+		{
+			"Color": 2176468223,
+			"Name": "grass2",
+			"Resources": [
+				[
+					"res://GLB_Objects/box/sprite_12.glb",
+					40
+				],
+				[
+					"res://GLB_Objects/box/sprite_13.glb",
+					70
+				],
+				[
+					"res://GLB_Objects/box/sprite_14.glb",
 					100
 				]
 			]
 		},
 		{
-			"Color": 584062975,
-			"Name": "prado",
+			"Color": 1218202879,
+			"Name": "grass3",
 			"Resources": [
 				[
-					"res://GLB_Objects/grass.glb",
-					80
+					"res://GLB_Objects/box/sprite_15.glb",
+					40
 				],
 				[
-					"res://GLB_Objects/grassFlower.glb",
+					"res://GLB_Objects/box/sprite_16.glb",
+					70
+				],
+				[
+					"res://GLB_Objects/box/sprite_17.glb",
+					100
+				]
+			]
+		},
+		{
+			"Color": 3739189247,
+			"Name": "desert1",
+			"Resources": [
+				[
+					"res://GLB_Objects/box/sprite_03.glb",
+					40
+				],
+				[
+					"res://GLB_Objects/box/sprite_04.glb",
+					70
+				],
+				[
+					"res://GLB_Objects/box/sprite_05.glb",
+					100
+				]
+			]
+		},
+		{
+			"Color": 3553524735,
+			"Name": "desert2",
+			"Resources": [
+				[
+					"res://GLB_Objects/box/sprite_06.glb",
+					40
+				],
+				[
+					"res://GLB_Objects/box/sprite_07.glb",
+					70
+				],
+				[
+					"res://GLB_Objects/box/sprite_08.glb",
+					100
+				]
+			]
+		},
+		{
+			"Color": 3333254399,
+			"Name": "desert3",
+			"Resources": [
+				[
+					"res://GLB_Objects/box/sprite_09.glb",
+					40
+				],
+				[
+					"res://GLB_Objects/box/sprite_10.glb",
+					70
+				],
+				[
+					"res://GLB_Objects/box/sprite_11.glb",
+					100
+				]
+			]
+		},
+		{
+			"Color": 358333951,
+			"Name": "water",
+			"Resources": [
+				[
+					"res://GLB_Objects/box/water1.glb",
+					100
+				]
+			]
+		},
+		{
+			"Color": 1274671871,
+			"Name": "snow",
+			"Resources": [
+				[
+					"res://GLB_Objects/box/snow.glb",
+					100
+				]
+			]
+		},
+		{
+			"Color": 2071690239,
+			"Name": "rock",
+			"Resources": [
+				[
+					"res://GLB_Objects/box/stone.glb",
 					100
 				]
 			]

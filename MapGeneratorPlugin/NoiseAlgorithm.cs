@@ -8,6 +8,8 @@ public class NoiseAlgorithm
     private FastNoiseLite tempNoise;
     private FastNoiseLite moistNoise;
     private FastNoiseLite heightMap;
+    private FastNoiseLite resourceNoise;
+
 
     public NoiseAlgorithm(uint seed, float freq2D, float freq3D)
     {
@@ -34,7 +36,19 @@ public class NoiseAlgorithm
         heightMap.SetFractalType(FastNoiseLite.FractalTypeEnum.None);
         heightMap.DomainWarpEnabled = false;
         heightMap.Offset = new Vector3(0, 0, 0);
-        
+
+        resourceNoise = new FastNoiseLite();
+        resourceNoise.SetNoiseType(FastNoiseLite.NoiseTypeEnum.SimplexSmooth);
+        resourceNoise.SetSeed((int)seed); // seed + 2
+        resourceNoise.SetFrequency(0.015f);
+        resourceNoise.SetFractalType(FastNoiseLite.FractalTypeEnum.PingPong);
+        resourceNoise.FractalOctaves = 3;
+        resourceNoise.FractalLacunarity = 2.0f;
+        resourceNoise.FractalGain = 1f;
+        resourceNoise.FractalWeightedStrength = 0f;
+        resourceNoise.FractalPingPongStrength = 50f;
+        resourceNoise.DomainWarpEnabled = false;
+        resourceNoise.Offset = new Vector3(0, 0, 0);
     }
     public Dictionary<int, Dictionary<int, List<Vector3>>> GenerateNoise(Vector3 offset, int width, int length, Godot.Collections.Array<Godot.Collections.Array<int>> coherenceTable, Zone[] zones, Godot.Collections.Array<int> heightOverride, bool useHeight = false)
     {
@@ -46,7 +60,7 @@ public class NoiseAlgorithm
             {
                 int indiTempNoise = 9 - Mathf.Clamp((int)((tempNoise.GetNoise2D(j + offset.Z, i + offset.X) + 1) * 5), 0, 9);
                 int indiMoistNoise = Mathf.Clamp((int)((moistNoise.GetNoise2D(j + offset.Z, i + offset.X) + 1) * 5), 0, 9);
-                int resourceNoise = (indiTempNoise + indiMoistNoise) * 5;
+                int indiresourceNoise = Mathf.Clamp((int)((resourceNoise.GetNoise2D(j + offset.Z, i + offset.X) + 1) * 50), 0, 99);
 
                 float height = (heightMap.GetNoise2D(j + offset.Z, i + offset.X) + 1f) * 5f;
                 int zoneIdHeight = heightOverride[9 - Mathf.Clamp((int)height, 0, 9)];
@@ -57,7 +71,7 @@ public class NoiseAlgorithm
                     if (zoneIdHeight != -1)
                         zoneId = zoneIdHeight;
 
-                    int resourceId = zones[zoneId].GetResources().GetResourceIndexByProbability(resourceNoise);
+                    int resourceId = zones[zoneId].GetResources().GetResourceIndexByProbability(indiresourceNoise);
 
                     if (!zonesUsed.ContainsKey(zoneId))
                         zonesUsed[zoneId] = new Dictionary<int, List<Vector3>>();
